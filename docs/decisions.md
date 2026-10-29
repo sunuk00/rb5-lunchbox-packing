@@ -3267,6 +3267,18 @@ the bus is not known, so the overvoltage is possible but not shown; wear or elec
 others. **Rejected:** lowering the bus baud rate (changes motor settings; the adapter was the fault); one
 U2D2 for both buses (gripper ID 2 = leader joint 2, and 1 vs 2 Mbps).
 
+## 2026-10-30 — paper-3: paper draft in `paper/`; Section III written in its own file
+
+**Decision (user):** the draft (`paper/main.tex`, IEEEtran, given by the user) lives in `paper/`, one file per
+written section under `paper/sections/` (`\input`). Section III (`03_system.tex`) follows the outline that was in
+main.tex: hardware and workspace (Table I, Fig. 1), software architecture (recording and execution paths, Fig. 2),
+the leader-follower interface (clutch-relative mapping, normal / rotate mode, orientation rule, gripper), and the
+command-shaping limits. The dataset format, ACT settings and the chunk ensembling stay in Section IV, as in the
+outline. Facts come from docs/hardware.md, configs/real.yaml and the decisions; values not settled (TCP offset,
+tool mass, collision detection during the evaluation, item and container sizes) are left as TODO comments, not
+written as facts. Figures are placeholders. **Rejected:** a Section III that also holds the dataset and policy
+runner (overlaps the outline's Section IV).
+
 ## PENDING
 
 - **14: RB-Y1 self-collision check during teleop.** Example 35 blocks the arm command when the

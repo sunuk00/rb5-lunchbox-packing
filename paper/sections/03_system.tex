@@ -1,0 +1,193 @@
+% Section III: System design and implementation (target 1.30 pages with Table I, Fig. 1, Fig. 2).
+% Sources: docs/hardware.md, configs/real.yaml (real-1 final, frozen), docs/decisions.md
+% (real-1, grip-5, rec-1, rec-6, hw-1). Data format and ACT execution details: Section IV.
+\section{System Design and Implementation}
+\label{sec:system}
+
+\subsection{Hardware and Workspace}
+\label{sec:hardware}
+The follower is a six-joint Rainbow Robotics RB5-850 collaborative
+manipulator. A host computer sends commands to its control box and receives
+the robot state over two TCP channels through the vendor's Python API.
+The operator uses the right arm of an RB-Y1 leader with seven Dynamixel joints.
+Its handle carries a clutch button, a mode button, and an analog trigger.
+The leader is read without torque while the clutch is pressed. When the
+clutch is released, its joints are torqued to hold their pose. The end
+effector is an in-house 3D-printed parallel gripper driven by one Dynamixel
+MX-106 actuator on a separate serial bus.
+
+Three RGB cameras record at $640\times480$ and 30~fps: a RealSense D435
+fixed obliquely in front of the workspace (\emph{front}), a Logitech C270
+fixed above the item area and looking straight down (\emph{top}), and a
+Logitech Brio~101 mounted on the gripper and aimed at the fingers
+(\emph{grip}). Exposure, gain, and white balance are fixed. Each exposure is a
+multiple of 1/120~s, so the 60~Hz room lighting does not flicker in the images.
+At start-up, each camera's mean brightness is compared with a reference value,
+and a deviation above 15\% requires operator confirmation.
+Depth is not used. A black box and a meal box with a large and a small hole
+are fixed at marked positions on the robot's table, and the items are placed
+within the view of the top camera (Fig.~\ref{fig:setup}). Table~\ref{tab:hardware}
+summarizes the components and operating settings.
+% TODO: item dimensions, finger clearance, hole sizes, container positions in the base frame.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox[c][0.55\columnwidth][c]{0.95\columnwidth}{\centering
+Photograph placeholder: RB5-850 with gripper and grip camera, RB-Y1 leader,
+front and top cameras, black box, meal box (large and small holes), item area.}}
+\caption{Experimental setup. The front and top cameras are fixed; the grip
+camera moves with the gripper.}
+\label{fig:setup}
+\end{figure}
+
+\begin{table}[t]
+\caption{Hardware, Software, and Operating Settings}
+\label{tab:hardware}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lp{0.68\columnwidth}@{}}
+\toprule
+Item & Specification\\
+\midrule
+Follower & RB5-850, 6 joints; control box software 8.4.4\\
+Leader & RB-Y1 right arm, 7 joints (XM540/XM430), 2~Mbps\\
+Gripper & In-house parallel, MX-106, current-based position mode\\
+Cameras & D435 (front), C270 (top), Brio~101 (grip); RGB $640\times480$, 30~fps\\
+Host & Intel i7-13700H, NVIDIA RTX A1000 6~GB laptop GPU, Ubuntu 24.04\\
+Software & rbpodo 0.16.14, LeRobot 0.6.1, PyTorch 2.11\\
+Command loop & 50~Hz Cartesian targets (\texttt{move\_servo\_l})\\
+Speed limits & 250~mm/s radial and vertical, 360~mm/s tangential;
+J1 75~deg/s, J2--J6 60~deg/s; 2.5~m/s$^2$\\
+Workspace & $r$ 250--800~mm (height dependent), $z$ 19--465~mm,
+azimuth $-160$ to $133^\circ$\\
+Gripper force & 0.50~A current cap while moving, 0.84~A while grasping\\
+\bottomrule
+\end{tabular}
+% TODO: TCP offset, tool mass, and collision-detection setting used in the evaluation
+% (the TCP offset on the controller is still provisional; docs/hardware.md).
+\end{table}
+
+\subsection{Software Architecture}
+\label{sec:architecture}
+All software runs on the host as Python processes, arranged in a recording
+path and an autonomous-execution path that share the camera, gripper, and
+command-shaping components (Fig.~\ref{fig:architecture}).
+
+In the recording path, a teleoperation process runs a 50~Hz cycle.
+In each cycle, it reads the leader joints and the latest RB5 state,
+computes the follower target, and sends it.
+The gripper runs in its own 50~Hz thread, so a gripper fault does not stop
+the arm. The cameras run in a separate process with a capture thread and a
+writer thread per camera, which store every frame as a JPEG image with its
+capture time. Image work therefore cannot delay the command cycle. Robot,
+gripper, and camera samples are stamped with the same monotonic clock and
+saved at their native rates. The 30~Hz dataset is built from them offline
+(Section~\ref{sec:workflow}).
+
+In the execution path, a policy process opens the same cameras with the same
+fixed settings and runs ACT on the GPU, at most once per 30~Hz step. Each
+predicted action chunk is stamped with its observation time. A servo
+process keeps the 50~Hz cycle without waiting for the policy. It combines the
+chunks by time and passes the resulting target through the same command
+shaping as in teleoperation. The two processes are pinned to separate CPU
+cores. The stated rates are implementation targets, not hard real-time
+guarantees. A cycle whose command would be sent more than 30~ms after the
+previous one keeps the previous target, and three such cycles in a row stop
+the run.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox[c][0.62\columnwidth][c]{0.95\columnwidth}{\centering
+Diagram placeholder.\\[3pt]
+Recording: leader FK $\rightarrow$ clutch-relative mapping $\rightarrow$
+command shaping $\rightarrow$ \texttt{move\_servo\_l} (50~Hz); gripper thread;
+camera process (30~fps JPEG); logs with one clock $\rightarrow$ 30~Hz dataset.\\[3pt]
+Execution: cameras + robot state $\rightarrow$ ACT (policy process, GPU)
+$\rightarrow$ time-stamped chunks $\rightarrow$ servo process (50~Hz) $\rightarrow$
+same command shaping $\rightarrow$ \texttt{move\_servo\_l}; gripper thread.}}
+\caption{Recording and autonomous-execution paths. Both send absolute
+Cartesian targets through the same command shaping; the recorded action is
+the shaped target.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Dissimilar Leader--Follower Interface}
+\label{sec:interface}
+The leader's joint angles are converted into the position of its wrist
+center $\mathbf{p}_L$ by forward kinematics on the vendor's URDF model.
+The seven leader joints and the six follower joints are never matched one to
+one. When the clutch is pressed at time $t_0$, the interface stores
+$\mathbf{p}_L(t_0)$ and the current follower target $\mathbf{p}_F(t_0)$, and
+then commands
+\begin{equation}
+\mathbf{p}_d(t) = \mathbf{p}_F(t_0) + s\,\big(\mathbf{p}_L(t)-\mathbf{p}_L(t_0)\big),
+\label{eq:mapping}
+\end{equation}
+with scale $s=1$. Releasing the clutch freezes the target, and the next press
+re-anchors both references. The operator can therefore reposition the hand
+without moving the robot.
+
+Early teleoperation trials showed that the natural arcs of the operator's hand
+leaked into unintended follower axes. Equation~\eqref{eq:mapping} is
+therefore applied in two modes. In the normal mode, the base azimuth is locked:
+forward and backward leader motion moves the target along the arm's current
+radial direction, vertical motion changes the height, and sideways motion is
+ignored. While the mode button is held, the radius and height are fixed and
+sideways motion turns the base at $0.3^\circ$ per millimeter. A dead band
+of 0.3~mm and a first-order low-pass filter with a 30~ms time constant
+suppress encoder-step jitter of $\mathbf{p}_L$.
+
+The tool orientation is not teleoperated. Roll and pitch keep the ready-pose
+values, with the gripper pointing straight down. The yaw follows the base
+azimuth of the target, so the gripper turns with the arm and the follower's
+last joint stays still. The orientation is thus a fixed function of the target
+position, and the position together with a gripper value fully specifies the
+command. Items must therefore be graspable without wrist rotation.
+
+The gripper opening is proportional to the trigger. At start-up the gripper
+follows only after the trigger reaches its current opening, which prevents
+a jump. In current-based position mode, the motor current is limited to
+0.50~A while moving. When the fingers stall on an item, the goal is set
+60~ticks ($5^\circ$) past the stall point and the cap is raised to 0.84~A,
+so the item is held firmly.
+
+\subsection{Operating Limits and Robot Interface}
+\label{sec:limits}
+In every 20~ms cycle, the desired position passes through a fixed sequence of
+command-shaping stages. Equation~\eqref{eq:mapping} gives this position in
+teleoperation; a policy action gives it in autonomous execution.
+\begin{enumerate}
+\item \emph{Workspace}: the target is clipped to a cylindrical region about
+the base axis (Table~\ref{tab:hardware}). The lower height bound keeps the
+fingers just above the table.
+\item \emph{Speed}: the step is limited to 250~mm/s radially and vertically
+and to 360~mm/s tangentially. The target may lag the hand by up to 20~mm and
+catches up after the hand stops.
+\item \emph{Singularities and joint limits}: the joint angles of the step are
+predicted by the RB5's analytic inverse kinematics. Wrist, shoulder, and
+elbow singularities and joint limits are monitored. Near one of them, the
+speed limit falls linearly to 25\%; closer still, the step is not sent.
+\item \emph{Joint speed}: per-joint limits of 75~deg/s for J1 and 60~deg/s
+for J2--J6.
+\item \emph{Acceleration}: a 2.5~m/s$^2$ limit on the target, applied
+last. In trials, the largest accelerations occurred when an earlier limit
+switched on or off.
+\end{enumerate}
+The shaped position and the orientation rule form the TCP pose that is
+streamed to the controller with the RB5 API call \texttt{move\_servo\_l}.
+In one teleoperation trial, the arm followed the commands about 80~ms
+behind, and the joint error stayed within $0.23^\circ$. The speed limits
+were raised step by step from 100~mm/s, based on hand speeds measured in
+logged real-robot trials. They were then frozen together with all other
+teleoperation settings before demonstration collection.
+
+Before any motion, the software checks that the controller is in real mode
+and that its TCP offset matches the expected value. It moves the robot to a
+fixed ready pose at low joint speed only after the operator types a
+confirmation. During operation, stale robot state, repeated leader read
+failures, or repeated late cycles stop the robot.
+The limiter is not collision avoidance and offers no formal safety
+guarantee. No collision-aware planner is used, and the controller's
+internal motion generation is outside the scope of this paper.
+% TODO: state the controller collision-detection setting and tool mass used in the evaluation.

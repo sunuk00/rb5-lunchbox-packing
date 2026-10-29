@@ -1,0 +1,323 @@
+% Application-paper draft: Sections I--III are prose; later sections are outlines.
+% IEEE CCWC 2027 is the provisional venue/year; see README.txt.
+% Uses the standard IEEE conference class without margin or font overrides.
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Application Paper Draft: Task-Space Imitation Learning for Lunchbox Packing},pdfauthor={}}
+
+\title{A Task-Space Imitation Learning System for Robotic Lunchbox Packing}
+\author{\IEEEauthorblockN{Author 1}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\textit{Abstract plan.} Motivate meal-packing automation for hotel, event,
+and airport catering through repetitive assembly and scheduled service needs.
+Introduce the application: teaching a collaborative robot to place model food
+items into designated lunchbox compartments through human demonstrations.
+Explain the kinematic mismatch between a seven-joint
+leader arm and the six-joint RB5 follower. Describe the integrated platform: an RB5
+manipulator, a parallel gripper, and three RGB cameras. Summarize the workflow
+from teleoperation and episode recording to Action Chunking with Transformers
+training and autonomous execution. State the evaluated task and test
+conditions. After experiments, report the measured success count, trial count,
+and packing time, followed by the principal failure mode and the supported
+application scope. The final abstract should be approximately 150--200 words;
+this is a writing target, not a conference-specific requirement.
+\end{abstract}
+
+\begin{IEEEkeywords}
+robotic manipulation, teleoperation, task-space imitation learning,
+lunchbox packing, system integration
+\end{IEEEkeywords}
+
+\noindent\textbf{Working draft.} Sections~I--III contain manuscript prose;
+the abstract and Sections~IV--VII remain writing plans. Lunchbox packing
+is the target application; the repository currently documents a block-to-box
+pilot. Application experiments are pending. The final manuscript targets
+seven pages including references. Remove this editorial note before submission.
+
+\section{Introduction}
+\label{sec:intro}
+Hotels, event venues, and airport catering services need to prepare meals
+consistently and in time for scheduled service. Boxed lunches offered by
+Las Vegas hotels illustrate this application in hospitality~\cite{venetian2026menu},
+while airline catering combines meal assembly with delivery coordinated to
+flight schedules~\cite{gategourmetcatering}. Preparing boxed meals and meal
+trays in these settings involves repeatedly arranging specified food items
+into containers. Automating this stage offers a way to reduce repetitive
+manual handling and support consistent meal assembly, motivating the
+development of robotic lunchbox-packing systems.
+
+A useful packing system must accommodate the item shapes, source positions,
+and container layouts associated with its intended menus. Each meal requires
+a complete sequence of picking, transferring, and placing multiple items;
+an isolated successful grasp does not ensure a correctly assembled lunchbox.
+An item can be dropped during transfer or released into the wrong compartment.
+These requirements motivate an automation approach in which operators can
+teach the packing motions through demonstrations and assess the resulting
+behavior at the level of the complete task.
+
+Visual imitation learning provides a way to learn such motions from images
+and demonstrated actions. Action Chunking with Transformers
+(ACT)~\cite{zhao2023act} and Diffusion Policy~\cite{chi2023diffusion} illustrate
+how action-sequence prediction can support manipulation from visual input.
+Applying a learned policy requires a demonstration-to-execution workflow in
+which camera observations, measured robot states, and commanded actions have
+consistent representations and explicit timing. We study this integration
+using reusable model food items and a compartmentalized container. The
+practical question is how the workflow supports completion of the entire
+packing sequence under specified workspace and object conditions.
+
+Our hardware introduces a further integration requirement: the RB-Y1 leader
+arm has seven joints, whereas the RB5 follower has six. Their different
+kinematic structures do not admit direct one-to-one joint copying. We use
+leader forward kinematics and clutch-relative Cartesian mapping to command
+the follower's tool position. This separates the operator's arm configuration
+from the Cartesian target delivered to the RB5 and allows demonstrations
+to be collected with the available leader hardware. The resulting policy
+still uses follower-specific state observations; the task-space interface
+serves demonstration collection and execution on the RB5.
+
+This paper presents an integrated imitation learning system designed for
+robotic lunchbox packing. The platform combines the leader arm, an RB5
+manipulator with a parallel gripper, and three RGB camera views. Recorded
+episodes are converted into a common training format, and an ACT policy
+predicts sequences of absolute Cartesian position targets and gripper commands
+from images and follower state. During execution, these predictions are
+converted to commands for the robot's Cartesian servo interface, with tool
+orientation supplied by a predefined rule. The contributions are:
+\begin{enumerate}
+\item An integrated platform connecting a kinematically dissimilar leader
+and follower, multi-view visual observations, and gripper control for a
+model-food lunchbox-packing application.
+\item A demonstration-to-deployment workflow that preserves the Cartesian
+position and gripper action representation across episode recording,
+dataset conversion, ACT training, and autonomous command execution.
+\item An application evaluation protocol that distinguishes individual
+grasp and placement outcomes from complete-packing success and records
+completion time, interventions, and failure modes.
+\end{enumerate}
+% Replace the third item with the supported empirical contribution after trials.
+The study is scoped to selected model foods, a fixed container, prescribed
+source layouts, and a predefined packing order. This scope makes complete
+task execution the central application criterion.
+
+\section{Related Work}
+\label{sec:related}
+\subsection{Robotic Food Serving and Packing}
+Tanemoto et al.~\cite{tanemoto2022bento} developed a household bento-serving
+system that combines food and environment recognition, dialogue, information
+storage, goal generation, and manipulation using tools. Their work places
+food serving within a complete household-assistance task. Santos et
+al.~\cite{santos2024packing} collected virtual-reality demonstrations of
+packing irregular grocery-like objects and learned a Markov model for
+predicting packing order. These studies address complementary aspects of
+packing: coordination of application components and selection of object
+sequence. Our target is the execution of demonstrated pick-and-place motions
+on a physical manipulator under a prescribed order and compartment assignment.
+Model foods provide a bounded laboratory task in which grasp, transfer,
+release, and complete-packing outcomes can be assessed separately.
+
+\subsection{Interfaces for Demonstration Collection}
+ALOHA~\cite{zhao2023act} uses approximately scaled leader and follower arms
+with joint-space mapping to collect bimanual manipulation demonstrations.
+Universal Manipulation Interface (UMI)~\cite{chi2024umi} uses handheld grippers
+for demonstration collection and combines a relative-trajectory action
+representation with inference-time latency matching to support deployment
+across robot platforms. These systems illustrate how the collection interface
+and the policy's observation and action representations shape deployment.
+In our setup, the seven-joint leader and six-joint follower are connected
+through a Cartesian teleoperation interface. Demonstrations are recorded
+while the RB5 executes the task, and the policy uses its joint and gripper
+state together with RGB observations. The role of this interface is to
+accommodate the available dissimilar hardware within one application system;
+policy transfer across follower robots remains outside the study's scope.
+
+\subsection{Visual Imitation Learning for Manipulation}
+ACT~\cite{zhao2023act} learns action chunks from visual observations and robot
+state using a transformer-based conditional variational autoencoder, with
+temporal ensembling of overlapping predictions. Diffusion
+Policy~\cite{chi2023diffusion} models action sequences through conditional
+denoising and executes them with receding-horizon control. Mandlekar et
+al.~\cite{mandlekar2022offline} show that learning from human demonstrations
+depends on demonstration quality, algorithmic choices, and the criteria used
+to select policies for evaluation. These findings motivate documenting the
+dataset and evaluation conditions alongside the adopted learning method.
+We use ACT as the policy component of the packing system. The paper's focus
+is the connection between data collection, action representation, robot
+execution, and task-level evaluation; the learning architecture follows the
+existing method.
+
+\input{sections/03_system}
+
+\section{Demonstration Collection and Policy Deployment}
+\label{sec:workflow}
+\subsection{Task and Demonstration Protocol}
+Define the per-item sequence: approach, descend, close, lift, transfer,
+lower, open, and retreat. The proposed main task repeats it for three model
+foods and three assigned compartments, subject to hardware feasibility.
+A model banana and two other graspable items are candidates, not confirmed
+equipment. Start with fixed item orientations, a fixed container, and a
+fixed packing order. Specify initial robot/gripper state and source layouts.
+
+Collect full packing episodes if evaluating one policy on the entire task.
+If policies are instead reset or selected per item, describe that orchestration
+and evaluate its intervention requirements. Describe keep/discard rules,
+lighting, session organization, retained episodes, and duration. Existing
+block demonstrations establish pipeline feasibility, not lunchbox performance.
+
+\subsection{Observation, Action, and Dataset Preparation}
+Define the real-robot state and commanded action as
+\begin{align}
+ \mathbf{s}_t &= [q^{\mathrm{enc}}_{1,t},\ldots,
+                  q^{\mathrm{enc}}_{6,t},g^{\mathrm{pos}}_t],\\
+ \mathbf{a}_t &= [x^{\mathrm{cmd}}_t,y^{\mathrm{cmd}}_t,
+                  z^{\mathrm{cmd}}_t,g^{\mathrm{cmd}}_t].
+\end{align}
+Joint angles are in degrees, Cartesian positions are in millimeters in the
+robot base frame, and gripper fractions range from zero (closed) to one
+(open). The complete observation also includes three RGB images. Tool yaw
+follows the base-azimuth rule; orientation is not an independent learned action.
+Thus the implemented action is absolute XYZ plus gripper, not a learned
+six-dimensional end-effector pose. Follower joint angles remain part of the
+observation, so the current policy is follower-specific.
+
+Explain interpolation from recorded robot samples to the 30~Hz dataset grid,
+nearest-time image selection, episode filtering, and resizing from
+$640\times480$ to $320\times240$. Distinguish the commanded Cartesian target
+used as the label from measured robot motion. Report time-alignment error
+and data rejection counts as dataset quality checks.
+
+\subsection{ACT Training and Autonomous Execution}
+Describe LeRobot-based ACT training and state clearly which settings were
+used for the evaluated checkpoint. The current configuration specifies
+100-action chunks, batch size 8, and 30,000 training steps, but an older
+checkpoint may have different settings.
+
+Explain the separate inference process, time-based chunk interpolation and
+ensembling, common target-following limits, and operator run/hold controls.
+Keep this explanation compact: it supports the application rather than
+asserting a new learning or scheduling algorithm. Note that inference uses
+the latest camera frames and robot state; exact hardware synchronization is
+not implemented.
+
+\section{Experimental Setup and Evaluation Protocol}
+\label{sec:experiments}
+\subsection{Lunchbox Task and Test Conditions}
+After one-item feasibility trials, evaluate complete packing from five
+predefined source layouts, four repetitions each: 20 complete trials per
+policy and condition. Use independent resets, a fixed start pose, and an
+initially open gripper. Choose a whole-task wall-clock deadline during pilot
+work and freeze it before evaluation; 120~s is a provisional starting value,
+not a measured result or an existing lunchbox protocol.
+
+A complete success requires every selected item to remain in its assigned
+compartment with the gripper released before the deadline and without
+operator assistance. Also report per-item grasp and placement success with
+their actual attempted-item denominators. Do not equate three successful
+isolated transfers with one uninterrupted complete packing trial.
+
+Prescribe the layout sequence before testing and counterbalance it when
+comparing conditions. Use test episodes that were not used for checkpoint
+selection. Split training and validation by episode or session rather than
+by adjacent frames. Report a single-seed study as such; additional independent
+training seeds strengthen repeatability but must not be implied.
+
+\subsection{Primary and Supporting Measures}
+\textbf{Primary:} complete-packing and per-item success counts, trial counts,
+success-rate confidence intervals, successful-trial completion time, and
+failure categories. Report failures separately from successful-trial time
+statistics so that fast failures do not appear advantageous.
+
+\textbf{Supporting:} demonstration duration and rejected episodes, inference
+latency, servo interval, late-cycle rate, and intervention counts. Compute
+inference statistics once per prediction, not once per servo row, because
+the same prediction can appear in several rows.
+
+\subsection{Optional Application Comparisons}
+Prioritize the complete application evaluation. If time permits, compare
+front-only images with all three cameras, retraining both conditions on
+the same episodes with the same split and training budget. A demonstration
+count study is another option. Treat operator teleoperation time as a
+reference condition. Joint-output and task-space-output policies need not be
+the main comparison for this application paper. If superiority of task-space
+actions is claimed, add a matched follower-joint-action baseline: dissimilar
+leader kinematics do not make follower-joint imitation learning impossible.
+
+\section{Results and Discussion}
+\label{sec:results}
+\subsection{Lunchbox Packing Performance}
+\textbf{Planned Table~II:} per-item grasp/placement success and complete
+packing success by source layout, with counts and confidence intervals.
+Report successful-trial packing time and interventions. \textbf{Planned
+Fig.~3:} an actual sequence from the source tray to a fully packed lunchbox.
+Populate all results from completed trials and identify failed sequences.
+
+\subsection{Failure Analysis and Operational Behavior}
+Analyze missed grasp, object slip, localization/approach error, premature
+release, wrong-compartment placement, divider contact, timeout, and operator
+stop using trial logs and video. Distinguish
+grasp success from full task success. Explain whether the robot continues
+the placement motion after a missed grasp and whether recovery demonstrations
+were included. Report runtime measurements as supporting evidence of usable
+operation, not as the main contribution.
+
+\subsection{Application Scope and Limitations}
+Discuss the selected artificial items, fixed orientations and container,
+constrained workspace, lighting, occlusion, and demonstration coverage.
+Explain that task-space commands bridge the leader/follower interface but
+do not establish transfer to another follower. Avoid claims of real-food
+handling, general industrial readiness, guaranteed safety, or unseen-object
+generalization without corresponding tests.
+
+\textbf{Evidence still required:} the raw demonstrations, evaluated checkpoint,
+training configuration, and controlled autonomous trial results are not
+present in this checkout. Historical development notes and simulation
+streaming tests do not replace the application evaluation. Before collecting
+results, address per-camera frame-age checking and trial/video recording.
+Write a lunchbox-specific protocol: the existing 60~s block evaluation and
+120~s running-cycle limit are not a whole-packing wall-clock protocol.
+
+\section{Conclusion}
+Summarize the integrated application and only the measured task outcomes.
+State the demonstrated operating scope and one practical limitation.
+Future work may cover more objects, recovery demonstrations, and richer
+orientation control. Residual reinforcement learning is future work, not
+part of the present system.
+
+\begin{center}
+\begin{minipage}{\columnwidth}
+\centering
+\textbf{Writing plan: final seven-page allocation}\\[4pt]
+\begin{tabular}{lr}
+\toprule
+Content & Pages\\
+\midrule
+Title, abstract, and keywords & 0.35\\
+I. Introduction & 0.65\\
+II. Related work & 0.45\\
+III. System design and implementation & 1.30\\
+IV. Demonstration collection and deployment & 1.10\\
+V. Experimental setup and protocol & 0.90\\
+VI. Results and discussion & 1.50\\
+VII. Conclusion & 0.15\\
+References & 0.60\\
+\midrule
+Total, including figures and tables & 7.00\\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{center}
+
+% Keep the working page-budget table intact and start references in the next column.
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}
