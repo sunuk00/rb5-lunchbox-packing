@@ -34,11 +34,16 @@ Decisions and measurements behind them are in `docs/decisions.md`.
 
 ## RB-Y1 leader arm
 - Two 7-joint arms with a handle (tool) each. Only the right arm is used for the RB5 teleop.
-- Dynamixel bus, Protocol 2.0, 2 Mbps, through an FTDI FT232H USB-serial adapter (serial FT62AJW7).
-  Port: `/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJW7-if00-port0` (by serial number, since
-  grip-1: with the gripper U2D2 also connected, `/dev/ttyUSB0` / `1` depend on the plug order).
+- Dynamixel bus, Protocol 2.0, 2 Mbps. **Since hw-1 (2026-10-30) through a U2D2 (serial FT62AJAX)**, the one
+  that was the gripper's: port `/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0` (by
+  serial number: with two adapters, `/dev/ttyUSB0` / `1` depend on the plug order). Until then the arm's own
+  FTDI FT232H adapter (serial FT62AJW7); it corrupted 3-5 % of the replies ("Incorrect status packet", every
+  ID alike, 12 V steady) and is no longer used (hw-1).
 - **FTDI latency_timer must be 1 ms** (default 16 ms makes each read about 16 ms, 11). The udev rule
-  `assets/udev/99-rb-cobot-usb-serial.rules` sets it and adds `/dev/rby1_leader_arm`; **not installed yet**.
+  `assets/udev/99-rb-cobot-usb-serial.rules` sets it and adds `/dev/rby1_leader_arm`; installed in
+  `/etc/udev/rules.d/` (after a change: `sudo cp` it there, `sudo udevadm control --reload-rules`, replug).
+- Motor voltage: Max / Min Voltage Limit 16.0 / 9.5 V (read 2026-10-30); 12 V supply. The arm once got 16 V
+  by mistake (user, date not recorded); the motors answer without errors since (hardware error 0).
 - IDs: right arm joints 0-6, left arm 7-13, right tool 128 (0x80), left tool 129 (0x81).
 - Motors (model number from ping, 11): XM540-W150 for IDs 0-3 and 7-10, XM430-W210 for IDs 4-6 and
   11-13.
@@ -79,8 +84,9 @@ Decisions and measurements behind them are in `docs/decisions.md`.
 - 3D-printed parallel gripper (built by a team member, in progress), one Dynamixel MX-106T (TTL, 3-pin).
   The Allegro Hand V4 is not used (user, 2026-10-17).
 - Own bus: U2D2 (USB) -> U2D2 Power Hub Board -> MX-106T. The U2D2 does not power the motor (e-Manual).
-  U2D2: FTDI FT232H (0403:6014, the same ids as the leader arm adapter), serial FT62AJAX; port
-  `/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0` (`scripts/config.py` GRIPPER_PORT),
+  U2D2: FTDI FT232H (0403:6014, the same ids as the leader arm adapter), **serial FT3WHQ1M since hw-1
+  (2026-10-30)** (FT62AJAX moved to the leader arm); port
+  `/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT3WHQ1M-if00-port0` (`scripts/config.py` GRIPPER_PORT),
   `/dev/gripper_u2d2` with the udev rule.
 - The motor (script 27 and DYNAMIXEL Wizard, 2026-10-17): **MX-106(2.0)**, model 321, firmware v45,
   **ID 2, 1,000,000 bps**, Protocol 2.0, operating mode 3 (position), position limits 2388-3853 (about

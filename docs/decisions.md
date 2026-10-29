@@ -3246,6 +3246,27 @@ before the recovery ones (u3 + 51 = 116). **Rejected:** a local log file and a p
 WandB gives live curves and run comparison without new code to maintain); TensorBoard (LeRobot 0.6.1 logs
 only to WandB); editing `train.steps` in policy.yaml for each long run (easy to forget to set back).
 
+## 2026-10-30 — hw-1: leader arm on a U2D2 (FT62AJAX), gripper on a new U2D2 (FT3WHQ1M); the leader FTDI is faulty
+
+**Decision (user):** the leader arm's own FTDI adapter (FT62AJW7) is no longer used. Leader arm = the U2D2
+that was the gripper's (FT62AJAX), gripper = a new U2D2 (FT3WHQ1M): `leader.port` / `gripper.port` in
+`configs/real.yaml` and `sim.yaml`, `scripts/config.py`, and the udev rule (latency_timer 1 ms, names) for the
+two serials. **Evidence:** from session real_20261029_141113 on (the 12:36 session was normal: 0.2 % frozen
+leader reads, 2 % tool reads) the teleop shook the RB5: 15 % of the leader joint reads and 20 % of the tool
+reads failed, so the target stopped and jumped (direction reversals 44 % of cycles, normal 9 %); the startup
+ping missed different IDs each time. No USB disconnects, latency_timer 1. Read-only tests (1000 rounds, one
+read per ID): every joint ID failed alike, 2.5-4.9 %, all "Incorrect status packet" (corrupted replies, no
+timeouts), 34 ms per failure, single failures spread evenly; 12.0-12.2 V; unchanged with the gripper power
+off, with another adapter-to-arm cable, and while each joint was moved 22-146 deg (no wiring fault in a
+moving joint). The same arm, cable and supply through the U2D2: 0 failures in 7000 joint and 1000 tool reads,
+p99 1.16 ms (FTDI: 34 ms); the tool's 15-30 % "normal" failures (also on 2026-10-10) were the adapter's too.
+The FTDI on the gripper bus (1 Mbps): 3000 of 3000 reads failed. **Cause:** not determined. The arm once got
+a 16 V supply by mistake (user; Max Voltage Limit 16.0 V, motors' operating range up to 14.8 V; date not
+recorded); the motors are unharmed (0 failures, hardware error 0) and whether the adapter takes power from
+the bus is not known, so the overvoltage is possible but not shown; wear or electrostatic discharge are
+others. **Rejected:** lowering the bus baud rate (changes motor settings; the adapter was the fault); one
+U2D2 for both buses (gripper ID 2 = leader joint 2, and 1 vs 2 Mbps).
+
 ## PENDING
 
 - **14: RB-Y1 self-collision check during teleop.** Example 35 blocks the arm command when the

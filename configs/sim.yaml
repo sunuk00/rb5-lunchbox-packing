@@ -13,7 +13,7 @@ servo:                          # same as Simulation (06, 10, 13 Real)
   alpha: 1.0
 
 leader:
-  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJW7-if00-port0   # by adapter serial (grip-1: two FTDI adapters); same as scripts/config.py
+  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0   # by adapter serial; U2D2 since 2026-10-30 (the FTDI FT62AJW7 corrupted replies); same as scripts/config.py
   required_latency_timer_ms: 1
 
 mapping:
@@ -123,7 +123,7 @@ ready_pose:                     # 2026-10-19 (user): the pose the user set on th
 
 gripper:                        # same as Simulation. MX-106T on its own U2D2 (grip-1 .. grip-3b, teleop/gripper.py)
   enabled: true                 # the gripper moves in Simulation too; python -m teleop --no-gripper turns it off
-  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0   # gripper U2D2; same as scripts/config.py
+  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT3WHQ1M-if00-port0   # gripper U2D2 FT3WHQ1M (2026-10-30); same as scripts/config.py
   trigger: left                 # left handle trigger (like the left button that turns J1)
   trigger_full: 1000.0          # trigger 0 (released) = closed, 1000 (fully pulled) = fully open, in proportion
   closed_ticks: 3968            # measured by hand (grip-2, docs/hardware.md)

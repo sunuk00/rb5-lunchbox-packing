@@ -13,5 +13,5 @@ SPEED = _robot["speed_bar"]     # speed bar
 
 # USB-serial devices by adapter serial number (/dev/serial/by-id): /dev/ttyUSB0 / 1 depend on the plug
 # order once two FTDI adapters are connected. The teleop uses the same leader path (configs/*.yaml).
-LEADER_PORT = "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJW7-if00-port0"   # FT62AJW7
-GRIPPER_PORT = "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0"   # gripper U2D2
+LEADER_PORT = "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT62AJAX-if00-port0"   # U2D2 FT62AJAX (2026-10-30: the FTDI FT62AJW7 corrupted 3-5 % of replies)
+GRIPPER_PORT = "/dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT3WHQ1M-if00-port0"   # gripper U2D2 FT3WHQ1M (2026-10-30)

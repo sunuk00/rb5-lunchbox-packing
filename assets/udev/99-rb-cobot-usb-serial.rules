@@ -4,10 +4,11 @@
 # attribute is on the usb-serial device (ttyUSB*); vendor, product and serial are matched on its parent
 # USB device (ATTRS).
 
-# RB-Y1 leader arm (serial FT62AJW7) -> /dev/rby1_leader_arm
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT62AJW7", SYMLINK+="rby1_leader_arm"
-ACTION=="add", SUBSYSTEM=="usb-serial", DRIVER=="ftdi_sio", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT62AJW7", ATTR{latency_timer}="1"
-
-# Gripper U2D2 (serial FT62AJAX, MX-106T) -> /dev/gripper_u2d2
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT62AJAX", SYMLINK+="gripper_u2d2"
+# RB-Y1 leader arm: U2D2 (serial FT62AJAX) since 2026-10-30 -> /dev/rby1_leader_arm
+# (the leader's own FTDI adapter FT62AJW7 corrupted 3-5 % of the replies at 2 Mbps and is no longer used)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT62AJAX", SYMLINK+="rby1_leader_arm"
 ACTION=="add", SUBSYSTEM=="usb-serial", DRIVER=="ftdi_sio", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT62AJAX", ATTR{latency_timer}="1"
+
+# Gripper: U2D2 (serial FT3WHQ1M, MX-106T) since 2026-10-30 -> /dev/gripper_u2d2
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT3WHQ1M", SYMLINK+="gripper_u2d2"
+ACTION=="add", SUBSYSTEM=="usb-serial", DRIVER=="ftdi_sio", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT3WHQ1M", ATTR{latency_timer}="1"
