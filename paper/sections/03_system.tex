@@ -57,10 +57,10 @@ Cameras & D435 (front), C270 (top), Brio~101 (grip); RGB $640\times480$, 30~fps\
 Host & Intel i7-13700H, NVIDIA RTX A1000 6~GB laptop GPU, Ubuntu 24.04\\
 Software & rbpodo 0.16.14, LeRobot 0.6.1, PyTorch 2.11\\
 Command loop & 50~Hz Cartesian targets (\texttt{move\_servo\_l})\\
-Speed limits & 250~mm/s radial and vertical, 360~mm/s tangential;
+Speed limits & 250~mm/s in $r$ and $z$, 360~mm/s along $\phi$;
 J1 75~deg/s, J2--J6 60~deg/s; 2.5~m/s$^2$\\
-Workspace & $r$ 250--800~mm (height dependent), $z$ 19--465~mm,
-azimuth $-160$ to $133^\circ$\\
+Workspace & $r$ 250--800~mm (depends on $z$), $z$ 19--465~mm,
+$\phi$ $-160$ to $133^\circ$\\
 Gripper force & 0.50~A current cap while moving, 0.84~A while grasping\\
 \bottomrule
 \end{tabular}
@@ -100,7 +100,7 @@ the run.
 \centering
 \fbox{\parbox[c][0.62\columnwidth][c]{0.95\columnwidth}{\centering
 Diagram placeholder.\\[3pt]
-Recording: leader FK $\rightarrow$ clutch-relative mapping $\rightarrow$
+Recording: leader FK $\rightarrow$ clutch-relative cylindrical mapping $\rightarrow$
 command shaping $\rightarrow$ \texttt{move\_servo\_l} (50~Hz); gripper thread;
 camera process (30~fps JPEG); logs with one clock $\rightarrow$ 30~Hz dataset.\\[3pt]
 Execution: cameras + robot state $\rightarrow$ ACT (policy process, GPU)
@@ -115,32 +115,42 @@ the shaped target.}
 \subsection{Dissimilar Leader--Follower Interface}
 \label{sec:interface}
 The leader's joint angles are converted into the position of its wrist
-center $\mathbf{p}_L$ by forward kinematics on the vendor's URDF model.
+center $\mathbf{p}_L=(x_L,y_L,z_L)$ by forward kinematics on the vendor's URDF
+model, with $x_L$ pointing forward and $z_L$ up.
 The seven leader joints and the six follower joints are never matched one to
-one. When the clutch is pressed at time $t_0$, the interface stores
-$\mathbf{p}_L(t_0)$ and the current follower target $\mathbf{p}_F(t_0)$, and
-then commands
+one. The follower target is expressed in cylindrical coordinates
+$(\phi, r, z)$ about the RB5 base axis: azimuth, horizontal distance from the
+axis, and height. When the clutch is pressed at time $t_0$, the interface
+stores $\mathbf{p}_L(t_0)$ and the current target $(\phi_0, r_0, z_0)$. Each
+axis of the leader displacement $\Delta\mathbf{p}_L=\mathbf{p}_L(t)-\mathbf{p}_L(t_0)$
+then drives a single follower coordinate. In the normal mode,
 \begin{equation}
-\mathbf{p}_d(t) = \mathbf{p}_F(t_0) + s\,\big(\mathbf{p}_L(t)-\mathbf{p}_L(t_0)\big),
-\label{eq:mapping}
+\phi = \phi_0,\quad r = r_0 + s\,\Delta x_L,\quad z = z_0 + s\,\Delta z_L,
+\label{eq:normal}
 \end{equation}
-with scale $s=1$. Releasing the clutch freezes the target, and the next press
-re-anchors both references. The operator can therefore reposition the hand
-without moving the robot.
+and while the mode button is held,
+\begin{equation}
+\phi = \phi_0 + k\,\Delta y_L,\quad r = r_0,\quad z = z_0,
+\label{eq:rotate}
+\end{equation}
+with $s=1$ and $k=0.3^\circ$/mm. The commanded position is
+$\mathbf{p}_d=(r\cos\phi,\ r\sin\phi,\ z)$ in the base frame. Releasing the
+clutch freezes the target, and the next press re-anchors both references, so
+the operator can reposition the hand without moving the robot.
 
-Early teleoperation trials showed that the natural arcs of the operator's hand
-leaked into unintended follower axes. Equation~\eqref{eq:mapping} is
-therefore applied in two modes. In the normal mode, the base azimuth is locked:
-forward and backward leader motion moves the target along the arm's current
-radial direction, vertical motion changes the height, and sideways motion is
-ignored. While the mode button is held, the radius and height are fixed and
-sideways motion turns the base at $0.3^\circ$ per millimeter. A dead band
+Early teleoperation trials used a Cartesian mapping,
+$\mathbf{p}_d=\mathbf{p}_d(t_0)+s\,\Delta\mathbf{p}_L$. In these trials, the
+natural arcs of the operator's hand leaked into unintended follower axes, and
+sideways drift turned the base. With \eqref{eq:normal} and
+\eqref{eq:rotate}, forward and backward leader motion moves the gripper along
+the arm's radial direction, vertical motion changes only its height, and the
+base turns only in the rotate mode. A dead band
 of 0.3~mm and a first-order low-pass filter with a 30~ms time constant
 suppress encoder-step jitter of $\mathbf{p}_L$.
 
 The tool orientation is not teleoperated. Roll and pitch keep the ready-pose
-values, with the gripper pointing straight down. The yaw follows the base
-azimuth of the target, so the gripper turns with the arm and the follower's
+values, with the gripper pointing straight down. The yaw changes with the
+target azimuth $\phi$, so the gripper turns with the arm and the follower's
 last joint stays still. The orientation is thus a fixed function of the target
 position, and the position together with a gripper value fully specifies the
 command. Items must therefore be graspable without wrist rotation.
@@ -155,15 +165,18 @@ so the item is held firmly.
 \subsection{Operating Limits and Robot Interface}
 \label{sec:limits}
 In every 20~ms cycle, the desired position passes through a fixed sequence of
-command-shaping stages. Equation~\eqref{eq:mapping} gives this position in
-teleoperation; a policy action gives it in autonomous execution.
+command-shaping stages. Equations \eqref{eq:normal} and \eqref{eq:rotate}
+give this position in teleoperation; a policy action gives it in autonomous
+execution. The first two stages use the same cylindrical coordinates as
+the mapping.
 \begin{enumerate}
-\item \emph{Workspace}: the target is clipped to a cylindrical region about
-the base axis (Table~\ref{tab:hardware}). The lower height bound keeps the
-fingers just above the table.
-\item \emph{Speed}: the step is limited to 250~mm/s radially and vertically
-and to 360~mm/s tangentially. The target may lag the hand by up to 20~mm and
-catches up after the hand stops.
+\item \emph{Workspace}: the target is clipped to
+$r_{\min}(z)\le r\le r_{\max}(z)$, $19\le z\le465$~mm, and
+$-160^\circ\le\phi\le133^\circ$ (Table~\ref{tab:hardware}). The lower
+height bound keeps the fingers just above the table.
+\item \emph{Speed}: the component of each step along $\phi$ is limited to
+360~mm/s, and the component in $r$ and $z$ to 250~mm/s. The target may lag the
+hand by up to 20~mm and catches up after the hand stops.
 \item \emph{Singularities and joint limits}: the joint angles of the step are
 predicted by the RB5's analytic inverse kinematics. Wrist, shoulder, and
 elbow singularities and joint limits are monitored. Near one of them, the
