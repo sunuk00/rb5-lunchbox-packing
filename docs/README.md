@@ -8,6 +8,7 @@
 | `pipeline_guide.md` | Commands for one round of the learning pipeline: collect (Real teleop), check and convert, train ACT, offline check, Simulation run | every round of collect -> train -> run |
 | `data_rules.md` | Rules of the demonstrations: task, placement, how to demonstrate, cameras, sessions, evaluation | before every collection session |
 | `hardware.md` | Lab hardware facts: RB5, PC, leader arm, cameras, gripper (MX-106T), with sources and TBD items | checking a device fact |
+| `experiments.md` | Every dataset, training run and Real policy run by its name on disk, with what it contains and its results | naming or comparing runs, writing the paper |
 | `decisions.md` | Every decision with date, reason, measurements and rejected options; topic list at the top, open items (PENDING) at the end | "why is this value like this?" |
 | `measurements/` | CSV + plot of the measurements from scripts 09 (data channel read rate), 10 (servo streaming rate) and 11 (leader arm read rate) | comparing timing |
 | `patches/` | Diff of script 15 against rby1-sdk example 35 | updating script 15 |

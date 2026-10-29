@@ -115,7 +115,9 @@ Two stages (t3-b, user, 2026-10-29):
 - **Stage 3, three objects (t3-d, user, 2026-10-29):** **50 normal three-object episodes** (natural re-grasps
   included) + **24 three-object recovery episodes** (table above), same cameras, lighting, box marks and
   demonstration habits as u1 / u3 -> dataset `u4` = u3 (65) + these (74) = 139 -> train long (100k steps,
-  overnight) -> evaluation (below). notes.txt in every session: `<attempt> normal` / `regrasp <object>` /
+  overnight) -> evaluation (below). As collected: 51 normal (`u4n`) and 24 recovery (`u4r`); `u4a` = u3 + u4n
+  (116, trained first while the leader adapter was replaced, hw-1), `u4` = u4a + u4r (140); all names in
+  `docs/experiments.md`. notes.txt in every session: `<attempt> normal` / `regrasp <object>` /
   `recovery ...` (the kind column is not needed: all three are on the table).
 
 ## Cameras
