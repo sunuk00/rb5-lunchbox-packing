@@ -35,7 +35,7 @@ Prediction error = `rb5_lerobot.check` on 200 training frames, median position e
 | act_u3_20261029_073415 | u3 | 30k | no | 30k: 23.5 / 25.6 / 30.9 | t3-c |
 | act_u1_20261029_094524 | u1 | 30k | no | not checked | t3-c |
 | act_u4a_20261029_161728 | u4a | 100k | rb5-lunchbox | 30k: 24.0 / 34.2 / 42.3; 60k: 15.8 / 23.0 / 29.0; 100k: 11.9 / 16.0 / 26.4 | t3-e |
-| act_u4_20261030_054110 | u4 | 100k (running) | rb5-lunchbox | | t3-d |
+| act_u4_20261030_054110 | u4 | 100k | rb5-lunchbox | 30k: 22.5 / 32.5 / 44.2; 60k: 15.4 / 21.1 / 31.7; 100k: 13.6 / 17.6 / 23.9 | t3-d |
 
 ## Real policy runs (`data/policy/run_real_<time>.csv / .json`)
 
