@@ -1,4 +1,4 @@
-% Application-paper draft: Sections I--V are prose; later sections are outlines.
+% Application-paper draft: Sections I--VI are prose; later sections are outlines.
 % IEEE CCWC 2027 is the provisional venue/year; see README.txt.
 % Uses the standard IEEE conference class without margin or font overrides.
 \documentclass[conference]{IEEEtran}
@@ -37,8 +37,8 @@ robotic manipulation, teleoperation, task-space imitation learning,
 lunchbox packing, system integration
 \end{IEEEkeywords}
 
-\noindent\textbf{Working draft.} Sections~I--V contain manuscript prose;
-the abstract and Sections~VI--VII remain writing plans. Lunchbox packing
+\noindent\textbf{Working draft.} Sections~I--VI contain manuscript prose;
+the abstract and Section~VII remain writing plans. Lunchbox packing
 is the target application; the repository currently documents a block-to-box
 pilot. Application experiments are pending. The final manuscript targets
 seven pages including references. Remove this editorial note before submission.
@@ -161,39 +161,7 @@ existing method.
 
 \input{sections/05_experiments}
 
-\section{Results and Discussion}
-\label{sec:results}
-\subsection{Lunchbox Packing Performance}
-\textbf{Planned Table~II:} per-item grasp/placement success and complete
-packing success by source layout, with counts and confidence intervals.
-Report successful-trial packing time and interventions. \textbf{Planned
-Fig.~3:} an actual sequence from the source tray to a fully packed lunchbox.
-Populate all results from completed trials and identify failed sequences.
-
-\subsection{Failure Analysis and Operational Behavior}
-Analyze missed grasp, object slip, localization/approach error, premature
-release, wrong-compartment placement, divider contact, timeout, and operator
-stop using trial logs and video. Distinguish
-grasp success from full task success. Explain whether the robot continues
-the placement motion after a missed grasp and whether recovery demonstrations
-were included. Report runtime measurements as supporting evidence of usable
-operation, not as the main contribution.
-
-\subsection{Application Scope and Limitations}
-Discuss the selected artificial items, fixed orientations and container,
-constrained workspace, lighting, occlusion, and demonstration coverage.
-Explain that task-space commands bridge the leader/follower interface but
-do not establish transfer to another follower. Avoid claims of real-food
-handling, general industrial readiness, guaranteed safety, or unseen-object
-generalization without corresponding tests.
-
-\textbf{Evidence still required:} the raw demonstrations, evaluated checkpoint,
-training configuration, and controlled autonomous trial results are not
-present in this checkout. Historical development notes and simulation
-streaming tests do not replace the application evaluation. Before collecting
-results, address per-camera frame-age checking and trial/video recording.
-Write a lunchbox-specific protocol: the existing 60~s block evaluation and
-120~s running-cycle limit are not a whole-packing wall-clock protocol.
+\input{sections/06_results}
 
 \section{Conclusion}
 Summarize the integrated application and only the measured task outcomes.
