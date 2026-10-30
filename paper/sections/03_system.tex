@@ -74,10 +74,12 @@ J1 75~deg/s, J2--J6 60~deg/s; 2.5~m/s$^2$\\
 Workspace & $r$ 250--800~mm (depends on $z$), $z$ 19--465~mm,
 $\phi$ $-160$ to $133^\circ$\\
 Gripper force & 0.50~A current cap while moving, 0.84~A while grasping\\
+TCP & $(0,-187,-40)$~mm from the flange, no rotation offset\\
 \bottomrule
 \end{tabular}
-% TODO: TCP offset, tool mass, and collision-detection setting used in the evaluation
-% (the TCP offset on the controller is still provisional; docs/hardware.md).
+% TCP: get_tcp_info on the controller, checked at every Real start (teleop/preflight.py check_tcp_offset,
+% tolerance 1 mm); configs/real.yaml expected_offset_mm unchanged since 2026-10-12 (before every dataset).
+% TODO: tool mass and collision-detection setting used in the evaluation.
 \end{table}
 
 \subsection{Software Architecture}
@@ -208,7 +210,10 @@ logged real-robot trials. They were then frozen together with all other
 teleoperation settings before demonstration collection.
 
 Before any motion, the software checks that the controller is in real mode
-and that its TCP offset matches the expected value. It moves the robot to a
+and that its TCP offset is within 1~mm of the value in Table~\ref{tab:hardware}.
+Every demonstration and policy run therefore used the same TCP, to which all
+positions in this paper refer; the 19~mm height bound was set by placing the
+fingertips just above the table. The software then moves the robot to a
 fixed ready pose at low joint speed only after the operator types a
 confirmation. During operation, stale robot state, repeated leader read
 failures, or repeated late cycles stop the robot.
