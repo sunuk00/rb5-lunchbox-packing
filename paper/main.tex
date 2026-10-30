@@ -1,4 +1,4 @@
-% Application-paper draft: Sections I--III are prose; later sections are outlines.
+% Application-paper draft: Sections I--IV are prose; later sections are outlines.
 % IEEE CCWC 2027 is the provisional venue/year; see README.txt.
 % Uses the standard IEEE conference class without margin or font overrides.
 \documentclass[conference]{IEEEtran}
@@ -37,8 +37,8 @@ robotic manipulation, teleoperation, task-space imitation learning,
 lunchbox packing, system integration
 \end{IEEEkeywords}
 
-\noindent\textbf{Working draft.} Sections~I--III contain manuscript prose;
-the abstract and Sections~IV--VII remain writing plans. Lunchbox packing
+\noindent\textbf{Working draft.} Sections~I--IV contain manuscript prose;
+the abstract and Sections~V--VII remain writing plans. Lunchbox packing
 is the target application; the repository currently documents a block-to-box
 pilot. Application experiments are pending. The final manuscript targets
 seven pages including references. Remove this editorial note before submission.
@@ -157,56 +157,7 @@ existing method.
 
 \input{sections/03_system}
 
-\section{Demonstration Collection and Policy Deployment}
-\label{sec:workflow}
-\subsection{Task and Demonstration Protocol}
-Define the per-item sequence: approach, descend, close, lift, transfer,
-lower, open, and retreat. The proposed main task repeats it for three model
-foods and three assigned compartments, subject to hardware feasibility.
-A model banana and two other graspable items are candidates, not confirmed
-equipment. Start with fixed item orientations, a fixed container, and a
-fixed packing order. Specify initial robot/gripper state and source layouts.
-
-Collect full packing episodes if evaluating one policy on the entire task.
-If policies are instead reset or selected per item, describe that orchestration
-and evaluate its intervention requirements. Describe keep/discard rules,
-lighting, session organization, retained episodes, and duration. Existing
-block demonstrations establish pipeline feasibility, not lunchbox performance.
-
-\subsection{Observation, Action, and Dataset Preparation}
-Define the real-robot state and commanded action as
-\begin{align}
- \mathbf{s}_t &= [q^{\mathrm{enc}}_{1,t},\ldots,
-                  q^{\mathrm{enc}}_{6,t},g^{\mathrm{pos}}_t],\\
- \mathbf{a}_t &= [x^{\mathrm{cmd}}_t,y^{\mathrm{cmd}}_t,
-                  z^{\mathrm{cmd}}_t,g^{\mathrm{cmd}}_t].
-\end{align}
-Joint angles are in degrees, Cartesian positions are in millimeters in the
-robot base frame, and gripper fractions range from zero (closed) to one
-(open). The complete observation also includes three RGB images. Tool yaw
-follows the base-azimuth rule; orientation is not an independent learned action.
-Thus the implemented action is absolute XYZ plus gripper, not a learned
-six-dimensional end-effector pose. Follower joint angles remain part of the
-observation, so the current policy is follower-specific.
-
-Explain interpolation from recorded robot samples to the 30~Hz dataset grid,
-nearest-time image selection, episode filtering, and resizing from
-$640\times480$ to $320\times240$. Distinguish the commanded Cartesian target
-used as the label from measured robot motion. Report time-alignment error
-and data rejection counts as dataset quality checks.
-
-\subsection{ACT Training and Autonomous Execution}
-Describe LeRobot-based ACT training and state clearly which settings were
-used for the evaluated checkpoint. The current configuration specifies
-100-action chunks, batch size 8, and 30,000 training steps, but an older
-checkpoint may have different settings.
-
-Explain the separate inference process, time-based chunk interpolation and
-ensembling, common target-following limits, and operator run/hold controls.
-Keep this explanation compact: it supports the application rather than
-asserting a new learning or scheduling algorithm. Note that inference uses
-the latest camera frames and robot state; exact hardware synchronization is
-not implemented.
+\input{sections/04_workflow}
 
 \section{Experimental Setup and Evaluation Protocol}
 \label{sec:experiments}
