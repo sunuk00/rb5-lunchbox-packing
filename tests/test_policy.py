@@ -440,6 +440,30 @@ class TestPolicyProcess(unittest.TestCase):
         time.sleep(0.3)
         self.assertEqual(client.poll(), [])                              # paused again
 
+    def test_video_of_the_cameras_side_by_side(self):
+        import tempfile
+        import cv2
+        tmp = Path(tempfile.mkdtemp())
+        path = tmp / "run_sim_x.mp4"
+        acts = np.c_[np.zeros((300, 3)), np.ones(300)]
+        client = PolicyClient({"kind": "replay", "actions": acts.tolist(), "fps": FPS, "video": str(path)},
+                              [("front", "bright@50", None), ("top", "bright@100", None),
+                               ("grip", "bright@200", None)], fake_cameras=True)
+        self.assertEqual(client.open(), [])
+        time.sleep(1.0)
+        client.close()
+        rows = (tmp / "run_sim_x_video.csv").read_text().splitlines()
+        self.assertEqual(rows[0], "frame,t_front,t_top,t_grip")
+        self.assertTrue(25 <= len(rows) - 1 <= 40)                      # about 30 frames in 1 s
+        t = [float(r.split(",")[1]) for r in rows[1:]]
+        self.assertEqual(t, sorted(t))
+        cap = cv2.VideoCapture(str(path))
+        ok, img = cap.read()
+        self.assertTrue(ok)
+        self.assertEqual(img.shape, (240, 960, 3))
+        np.testing.assert_allclose([img[:, i * 320:(i + 1) * 320].mean() for i in range(3)], [50, 100, 200], atol=6)   # lossy video
+        self.assertEqual(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), len(rows) - 1)
+
     def test_unknown_policy_is_reported(self):
         client = PolicyClient({"kind": "nope"}, [], fake_cameras=True)
         problems = client.open()

@@ -33,7 +33,8 @@ Policies inside the process (spec dicts, so they can be pickled):
   {"kind": "act", "checkpoint": path, "device": "cuda", "task": text,
    "torch_threads": 4}                                                    a trained ACT (rec-6b)
 Any spec may have "cpu_cores": [first, last]: the policy process pins itself there (the servo process
-pins itself to other cores: they must not compete, rec-6b Simulation runs).
+pins itself to other cores: they must not compete, rec-6b Simulation runs), and "video": path.mp4: from
+"ready" until the process ends, the cameras side by side are written there (t3-f, _VideoWriter).
 
 Observation tensors for ACT are made by observation_batch(), the same steps as LeRobot's
 prepare_observation_for_inference: image HWC uint8 RGB (the cameras stream rgb8, the recording saved the
@@ -122,6 +123,59 @@ class _Latest(threading.Thread):
     def latest(self):
         with self.lock:
             return self.frame
+
+
+VIDEO_TILE = (320, 240)     # each camera in the run video (the size the policies are trained on)
+
+
+def video_frame(images, names=(), size=VIDEO_TILE):
+    """t3-f: the camera images (HWC uint8 RGB) side by side, each shrunk to size and labelled with its name at
+    the top left, in OpenCV's BGR order."""
+    import cv2
+    tiles = [cv2.cvtColor(cv2.resize(img, size, interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2BGR) for img in images]
+    for tile, name in zip(tiles, names):
+        cv2.putText(tile, name, (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    return np.hstack(tiles)
+
+
+class _VideoWriter(threading.Thread):
+    """t3-f: every 1/fps writes the latest frame of every camera, side by side, to an mp4 (mp4v), and to a csv
+    next to it (<stem>_video.csv) the frame number and each camera's capture time [monotonic s]. A camera
+    slower than fps repeats its frame; a writer that falls behind skips ahead (the csv has the real times)."""
+
+    def __init__(self, path, readers, fps, stop):
+        super().__init__(daemon=True, name="video")
+        self.path, self.readers, self.period, self.stop_event = Path(path), readers, 1.0 / fps, stop
+
+    def run(self):
+        import cv2
+        writer = None
+        try:
+            with open(self.path.with_name(self.path.stem + "_video.csv"), "w") as f:
+                f.write(",".join(["frame"] + [f"t_{n}" for n in self.readers]) + "\n")
+                n, next_t = 0, time.monotonic()
+                while not self.stop_event.is_set():
+                    frames = [r.latest() for r in self.readers.values()]
+                    img = video_frame([fr[0] for fr in frames], list(self.readers))
+                    if writer is None:
+                        writer = cv2.VideoWriter(str(self.path), cv2.VideoWriter_fourcc(*"mp4v"),
+                                                 1.0 / self.period, (img.shape[1], img.shape[0]))
+                        if not writer.isOpened():
+                            raise RuntimeError(f"cannot open {self.path} for writing")
+                    writer.write(img)
+                    f.write(",".join([str(n)] + [f"{fr[1]:.4f}" for fr in frames]) + "\n")
+                    n += 1
+                    next_t += self.period
+                    rest = next_t - time.monotonic()
+                    if rest > 0:
+                        time.sleep(rest)
+                    else:
+                        next_t = time.monotonic()
+        except Exception as e:
+            print(f"VIDEO STOPPED: {e}", flush=True)
+        finally:
+            if writer is not None:
+                writer.release()
 
 
 class ReplayPolicy:
@@ -279,6 +333,10 @@ def _policy_main(spec, cameras, fake_cameras, fps, state, out_q, cmd_q, reply_q)
     # 42 s and delayed an inference by that much (rec-6b endurance). Freeze them: GC stays on for new objects.
     gc.collect()
     gc.freeze()
+    video = None
+    if spec.get("video") and readers:
+        video = _VideoWriter(spec["video"], readers, fps, stop)
+        video.start()
     reply_q.put(("ready", {"cameras": info}))
     period, n = 1.0 / fps, 0
     go = None        # the number of the current "go"; None: paused (no inference)
@@ -314,6 +372,8 @@ def _policy_main(spec, cameras, fake_cameras, fps, state, out_q, cmd_q, reply_q)
                 time.sleep(rest)
     finally:
         stop.set()
+        if video is not None:
+            video.join(2.0)         # the mp4 is readable only after release()
         for cam in opened:
             cam.close()
 
@@ -437,6 +497,7 @@ class PolicyRunner:
         self.run_time = 0.0       # seconds spent running since the last g (time limit per attempt, p3-d)
         self.rows = []
         self.last_infer = (None, None)
+        self.t_start = None
 
     def _grip_frac(self):
         if self.gripper is None:
@@ -458,6 +519,7 @@ class PolicyRunner:
     def run(self):
         sf, period = self.s.safety, self.s.servo.period_s
         t_start = next_t = self.clock()
+        self.t_start = t_start    # t_s = 0 of the rows [monotonic s] (t3-f: the run video's csv is aligned to it)
         last_send = prev = None
         late_run = stale_run = 0
         last_arrival = t_start

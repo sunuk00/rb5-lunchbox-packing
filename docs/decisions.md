@@ -3279,6 +3279,20 @@ tool mass, collision detection during the evaluation, item and container sizes) 
 written as facts. Figures are placeholders. **Rejected:** a Section III that also holds the dataset and policy
 runner (overlaps the outline's Section IV).
 
+## 2026-10-30 — t3-f: policy runs record a video of the three cameras
+
+**Decision (user):** every policy run (`rb5_lerobot.run`, Simulation and Real; `--no-video` turns it off)
+writes `data/policy/run_<mode>_<time>.mp4`: front, top and grip side by side at 320x240 each (mp4v), labelled,
+at 30 fps, written by a thread in the policy process from its "ready" until the end, plus `_video.csv` with each
+frame's camera capture times and `t_s` on the run csv's clock. The file name's time is now the program start
+(it was the end), because the video's name is needed before the run. **Reason:** the run log cannot tell a held
+item from an empty grasp (gripper position about 0 for both) nor which item was carried, and the first act_u4
+run (130515) could not be split into trials or judged from the log; the evaluation needs a record of every
+trial. Measured: inference p50 21.5-21.7 ms with and without the video (act_u4, real cameras, 20 s each);
+about 55 kB/s. **Rejected:** opening the cameras in a second program (a camera is opened by one process only);
+full 640x480 tiles (larger and slower, and 320x240 is what the policy sees); a phone video only (not aligned
+with the log; still useful for figures).
+
 ## PENDING
 
 - **14: RB-Y1 self-collision check during teleop.** Example 35 blocks the arm command when the

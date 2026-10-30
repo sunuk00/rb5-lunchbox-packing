@@ -32,7 +32,11 @@ Steps:
      action further than run.max_jump_mm from the target, the time limit; stops when no chunk came for
      run.stop_stale_s while inferring. Every target goes through the teleop's limits (TargetFollower), speed caps 100 %.
   5. normal stop (task_stop on errors); data/policy/run_<time>.csv (a row per cycle) and the summary:
-     late cycles, chunk age, inference time, holds
+     late cycles, chunk age, inference time, holds. <time> is the start of the program (t3-f).
+
+Video (t3-f; --no-video turns it off): run_<time>.mp4, the three cameras side by side at 320x240 each, written
+by the policy process from its "ready" until the end, and run_<time>_video.csv: per video frame each camera's
+capture time and t_s, the time on the run csv's clock (the frame a log event shows: the row with that t_s).
 """
 import argparse
 import csv
@@ -70,6 +74,18 @@ def ask(prompt, answer="yes"):
     return input(prompt).strip() == answer
 
 
+def add_run_time(path, t_start):
+    """t3-f: adds t_s (the first camera's capture time on the run csv's clock) to the video csv the policy
+    process wrote. Returns the number of frames (None: no csv)."""
+    if not path.exists():
+        return None
+    lines = path.read_text().splitlines()
+    if t_start is not None:
+        lines = [lines[0] + ",t_s"] + [f"{x},{float(x.split(',')[1]) - t_start:.4f}" for x in lines[1:]]
+        path.write_text("\n".join(lines) + "\n")
+    return len(lines) - 1
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("checkpoint", help="training folder data/train/act_<name>_<time> (its last checkpoint) or a "
@@ -79,6 +95,7 @@ def main():
     ap.add_argument("--task", help="task text (default record.task)")
     ap.add_argument("--no-gripper", action="store_true", help="without the gripper (its action is only logged)")
     ap.add_argument("--real", action="store_true", help="REAL robot (asks to type REAL)")
+    ap.add_argument("--no-video", action="store_true", help="no run video (data/policy/run_<time>.mp4)")
     args = ap.parse_args()
     real = args.real
     mode = "REAL" if real else "Simulation"
@@ -119,9 +136,14 @@ def main():
     if unknown or state_len != 7:
         raise SystemExit(f"NOT STARTING - the policy expects cameras {names} / state {state_len} (known: {known}, 7)")
     cams = camera_defs(r, names)   # the same devices, formats and fixed settings as the recording
+    out = ROOT / "data" / "policy"
+    out.mkdir(parents=True, exist_ok=True)
+    stem = f"run_{'real' if real else 'sim'}_{datetime.now():%Y%m%d_%H%M%S}"
+    video = None if args.no_video else out / f"{stem}.mp4"
     print(f"Policy {ckpt} (cameras {names}), task '{task}'. Loading (model on the GPU, cameras) ...")
     client = PolicyClient({"kind": "act", "checkpoint": str(ckpt), "device": "cuda", "task": task,
-                           "cpu_cores": policy_cores, "torch_threads": rc.torch_threads}, cams)
+                           "cpu_cores": policy_cores, "torch_threads": rc.torch_threads,
+                           "video": None if video is None else str(video)}, cams)
     problems = client.open(timeout=120.0)
     if problems:
         client.close()
@@ -307,9 +329,9 @@ def main():
     print(f"Error: {error}" if error else f"Stopped: {stop_text}")
 
     # 5. Log and summary
-    out = ROOT / "data" / "policy"
-    out.mkdir(parents=True, exist_ok=True)
-    stem = f"run_{'real' if real else 'sim'}_{datetime.now():%Y%m%d_%H%M%S}"
+    video_frames = None
+    if video is not None:
+        video_frames = add_run_time(out / f"{stem}_video.csv", runner.t_start)
     with open(out / f"{stem}.csv", "w", newline="") as f:
         csv.writer(f).writerows([RUN_HEADER] + runner.rows)
     (out / f"{stem}.json").write_text(json.dumps({"checkpoint": str(ckpt), "task": task,
@@ -317,6 +339,8 @@ def main():
                                                   "mode": mode, "robot_config": robot_config,
                                                   "image_sizes": sizes, "cameras": cam_info,
                                                   "gripper": grip_info, "stop": stop_text,
+                                                  "video": None if video is None else video.name,
+                                                  "video_frames": video_frames,
                                                   "error": None if error is None else str(error)},
                                                  indent=1, default=int))
     ix = {h: i for i, h in enumerate(RUN_HEADER)}
@@ -335,7 +359,8 @@ def main():
         if grip_info is not None:
             grip, act = col("grip_pos"), col("grip_action")
             print(f"gripper position {grip.min():.2f} .. {grip.max():.2f} (action {act.min():.2f} .. {act.max():.2f})")
-    print(f"saved {(out / stem).relative_to(ROOT)}.csv / .json")
+    print(f"saved {(out / stem).relative_to(ROOT)}.csv / .json"
+          + ("" if video is None else f" / .mp4 ({video_frames} frames) / _video.csv"))
 
 
 if __name__ == "__main__":

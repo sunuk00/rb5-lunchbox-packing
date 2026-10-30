@@ -180,6 +180,12 @@ python -m rb5_lerobot.run $OUT --real
   first action distance `yes`; then `g` = run, `space` = hold, `q` = quit (Ctrl+C also stops).
 - The state given to the policy is the encoder joints (jnt_ang), as in the Real recordings.
 - Log: `data/policy/run_real_<time>.csv` / `.json`.
+- Video (t3-f, both modes; `--no-video` turns it off): `run_<mode>_<time>.mp4`, front / top / grip side by
+  side at 320x240 each (what the policy sees), from the moment the policy process is ready until the end
+  (holds and object resets included), about 55 kB/s. `run_<mode>_<time>_video.csv` has, per video frame, each
+  camera's capture time and `t_s` on the run csv's clock: to see a log event (e.g. a close at 135.8 s), find
+  the frame with that `t_s`. `<time>` is the start of the program. No effect on the inference time (act_u4,
+  real cameras: p50 21.5-21.7 ms with and without).
 
 ## What to redo after changing configs/policy.yaml
 
