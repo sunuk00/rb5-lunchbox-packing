@@ -20,6 +20,8 @@ EVAL_DIR = ROOT / "data" / "eval"
 SHEET = EVAL_DIR / "eval_sheet.csv"
 PHOTOS = EVAL_DIR / "layouts"
 COLORS = {"C": (255, 140, 0), "O": (0, 80, 255), "R": (230, 0, 0)}     # RGB: carrot, Oreo, RITZ
+# Sheet codes (docs/data_rules.md "Evaluation"): carrot / oreo / ritz = 0 not attempted, G grasped, T transported,
+# P placed in a wrong container, OK correct; complete / order_error / wrong_hole / intervention = 1 or 0.
 SHEET_HEADER = ["trial", "round", "layout", "run_file", "complete", "carrot", "oreo", "ritz", "misses",
                 "recoveries", "order_error", "wrong_hole", "intervention", "completion_s", "failure", "notes"]
 PREVIEW_FPS = 10

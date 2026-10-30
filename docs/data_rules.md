@@ -174,12 +174,21 @@ Two stages (t3-b, user, 2026-10-29):
 - **Complete success:** within 180 s and without help: the carrot in the black box, the Oreo in the large hole, the
   RITZ in the small hole, the gripper open. A snack counts as in its hole when it rests touching the inside of
   that hole, tilted or not (they are longer than the hole); on the rim or outside it does not.
-- **Per item:** grasped (on the first try or after how many), placed in the right container; after a miss:
-  re-grasped (recovery) or carried on empty. **Errors:** order (RITZ before Oreo), wrong hole, dropped, hit /
-  intervention, time limit, repeated misses. Judged from the video after the session.
-- **Measures:** complete successes / 20 with a Wilson 95 % interval; per-item grasp and placement success over
-  the items actually attempted; first-try grasps; recovery rate (misses followed by a successful re-grasp / all
-  misses); order and wrong-hole errors; completion time of the successful trials (g to the last release); failure
+- **Per item, four stages** (judged from the video after the session; user, 2026-10-31):
+  1. grasp: lifted off the table (a re-grasp after a miss counts, within the 180 s);
+  2. transport: carried above the black box or the meal box without dropping it;
+  3. place: released and resting inside some container (a snack touching the inside of a hole counts);
+  4. correct: that container is the assigned one (carrot black box, Oreo large hole, RITZ small hole).
+  An item that never reached a stage (e.g. the next items after a time-out on the carrot) is **not attempted**
+  there, not a failure: each stage's rate is over the items that reached it. Sheet code per item (`carrot`,
+  `oreo`, `ritz`): `0` not attempted, `G` grasped only, `T` transported (dropped or on a rim), `P` placed in a
+  wrong container, `OK` correct. `misses`: closes on nothing; `recoveries`: items grasped after a miss.
+  Trial-level: `complete` (1 / 0), `order_error` (RITZ before Oreo), `wrong_hole`, `intervention`,
+  `completion_s` (g to the last release, successes only), `failure` (main cause).
+- **Measures:** complete successes / 20 with a Wilson 95 % interval; per stage: successes / items that reached
+  the stage (conditional); per item end to end: correct items / 60 (shows the cascade); grasp detail: first-try
+  grasps / attempted items, successful closes / all closes, recovery rate (items grasped after at least one miss /
+  items with a miss); order and wrong-hole errors per trial; completion time of the successful trials; failure
   categories. Reference: teleoperation 58.8 s per three-item episode (u4n). Supporting: inference time, servo
   interval, late cycles, holds.
 

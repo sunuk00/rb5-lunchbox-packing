@@ -3310,6 +3310,11 @@ random layouts per trial (not repeatable).
 --trial N` shows trial N's layout (photo blended in, targets) in a browser from the policy process (which holds the
 cameras during a run) and writes the run's file name into the sheet. **Rejected:** opening scripts/37 between
 trials (two programs per trial, the layout picked by hand).
+**Addendum 2 (user, 2026-10-31): scoring.** Each item is judged in four stages (grasp, transport, place, correct
+container); an item that never reached a stage is not attempted there, and each stage's rate is conditional on
+reaching it; the cascade shows in the end-to-end rate (correct items / 60) and the complete-success rate (/ 20).
+**Rejected:** counting every later stage as failed after a failed grasp (counts one failure several times and hides
+which stage is weak).
 
 ## PENDING
 
