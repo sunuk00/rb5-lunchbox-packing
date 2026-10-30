@@ -3306,6 +3306,10 @@ application evaluation first. The paper therefore does not claim that the recove
 success rate; it reports the recovery observed. Wording: "the final policy trained on all demonstrations", not
 "the best". **Rejected:** u4a vs u4 with 10 trials each (wide intervals for both; can be added later);
 random layouts per trial (not repeatable).
+**Addendum (user, 2026-10-31):** no tape marks; the 5 saved top photos are the reference. `rb5_lerobot.run --real
+--trial N` shows trial N's layout (photo blended in, targets) in a browser from the policy process (which holds the
+cameras during a run) and writes the run's file name into the sheet. **Rejected:** opening scripts/37 between
+trials (two programs per trial, the layout picked by hand).
 
 ## PENDING
 

@@ -37,6 +37,11 @@ Steps:
 Video (t3-f; --no-video turns it off): run_<time>.mp4, the three cameras side by side at 320x240 each, written
 by the policy process from its "ready" until the end, and run_<time>_video.csv: per video frame each camera's
 capture time and t_s, the time on the run csv's clock (the frame a log event shows: the row with that t_s).
+
+Evaluation trial (t3-g): --trial N takes trial N's layout from data/eval/eval_sheet.csv (refused when that row
+already has a run file), serves the top camera with the layout's targets and its saved photo at
+http://localhost:8080 (--preview-port) from the start, to place the items while the arm is at the ready pose,
+and at the end writes the run's file name into the row's run_file.
 """
 import argparse
 import csv
@@ -60,6 +65,7 @@ from teleop.follow import TargetFollower  # noqa: E402
 from teleop.gripper import MODE_AT_END, PRESENT_POSITION, open_gripper, start_lines, start_worker  # noqa: E402
 from teleop.kinematics import RB5Model  # noqa: E402
 from rb5_lerobot.config import DEFAULT, load_policy_config  # noqa: E402
+from rb5_lerobot.layouts import SHEET, load_layouts, photo_path, set_run_file, trial_row  # noqa: E402
 from rb5_lerobot.policy import (RUN_HEADER, PolicyClient, PolicyRunner, StopRequest, parse_policy_keys,  # noqa: E402
                                 policy_image_sizes, policy_inputs, resolve_checkpoint)
 from teleop.safety import Watch  # noqa: E402
@@ -96,6 +102,8 @@ def main():
     ap.add_argument("--no-gripper", action="store_true", help="without the gripper (its action is only logged)")
     ap.add_argument("--real", action="store_true", help="REAL robot (asks to type REAL)")
     ap.add_argument("--no-video", action="store_true", help="no run video (data/policy/run_<time>.mp4)")
+    ap.add_argument("--trial", type=int, help="evaluation trial number in data/eval/eval_sheet.csv (layout preview)")
+    ap.add_argument("--preview-port", type=int, default=8080, help="port of the --trial layout preview")
     args = ap.parse_args()
     real = args.real
     mode = "REAL" if real else "Simulation"
@@ -140,15 +148,35 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     stem = f"run_{'real' if real else 'sim'}_{datetime.now():%Y%m%d_%H%M%S}"
     video = None if args.no_video else out / f"{stem}.mp4"
+    preview = trial = None
+    if args.trial is not None:
+        try:
+            row = trial_row(args.trial)
+        except (OSError, ValueError) as e:
+            raise SystemExit(f"NOT STARTING - --trial: {e}")
+        layouts, _, M = load_layouts()
+        trial = {"trial": args.trial, "round": int(row["round"]), "layout": row["layout"]}
+        title = f"Trial {args.trial} (round {row['round']}): layout {row['layout']}"
+        if "top" not in names:
+            raise SystemExit("NOT STARTING - --trial needs the top camera, which this policy does not use")
+        if not photo_path(row["layout"]).exists():
+            print(f"  WARNING: no saved photo {photo_path(row['layout']).relative_to(ROOT)}: only the targets are drawn")
+        preview = {"port": args.preview_port, "camera": "top", "layout": layouts[row["layout"]],
+                   "layout_name": row["layout"], "M": M.tolist(), "title": title}
+        print(title + ": " + ", ".join(f"{k} {v}" for k, v in layouts[row["layout"]].items()))
     print(f"Policy {ckpt} (cameras {names}), task '{task}'. Loading (model on the GPU, cameras) ...")
     client = PolicyClient({"kind": "act", "checkpoint": str(ckpt), "device": "cuda", "task": task,
                            "cpu_cores": policy_cores, "torch_threads": rc.torch_threads,
-                           "video": None if video is None else str(video)}, cams)
+                           "video": None if video is None else str(video), "preview": preview}, cams)
     problems = client.open(timeout=120.0)
     if problems:
         client.close()
         raise SystemExit("NOT STARTING - policy process:\n  " + "\n  ".join(problems))
     cam_info = client.info["cameras"]
+    if preview is not None:
+        shown = client.info.get("preview") or "layout preview not started"
+        print(f"Layout preview: {shown}  (place the items on the photo while the arm is at the ready pose)"
+              if shown.startswith("http") else f"  WARNING: {shown}")
     for n, c in cam_info.items():
         st = c["settings"]
         print(f"  {n} {c['serial']} ({c['format']}): exposure {st['exposure_us'] / 1000:.1f} ms, gain {st['gain']:g}, "
@@ -340,6 +368,7 @@ def main():
                                                   "image_sizes": sizes, "cameras": cam_info,
                                                   "gripper": grip_info, "stop": stop_text,
                                                   "video": None if video is None else video.name,
+                                                  "trial": trial,
                                                   "video_frames": video_frames,
                                                   "error": None if error is None else str(error)},
                                                  indent=1, default=int))
@@ -361,6 +390,9 @@ def main():
             print(f"gripper position {grip.min():.2f} .. {grip.max():.2f} (action {act.min():.2f} .. {act.max():.2f})")
     print(f"saved {(out / stem).relative_to(ROOT)}.csv / .json"
           + ("" if video is None else f" / .mp4 ({video_frames} frames) / _video.csv"))
+    if trial is not None:
+        set_run_file(args.trial, stem)
+        print(f"trial {args.trial} ({trial['layout']}): run_file {stem} written to {SHEET.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

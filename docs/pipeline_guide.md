@@ -186,6 +186,12 @@ python -m rb5_lerobot.run $OUT --real
   camera's capture time and `t_s` on the run csv's clock: to see a log event (e.g. a close at 135.8 s), find
   the frame with that `t_s`. `<time>` is the start of the program. No effect on the inference time (act_u4,
   real cameras: p50 21.5-21.7 ms with and without).
+- Evaluation trial (t3-g): `--trial N` takes trial N's layout from `data/eval/eval_sheet.csv` and shows the top
+  camera at http://localhost:8080 (`--preview-port`) with that layout's saved photo blended in and its targets,
+  from the start (place the items while the arm is at the ready pose, then `yes` and `g`). At the end the run's
+  file name goes into the row's `run_file`; a trial whose row already has one is refused. The drawings are only
+  in the preview (not in the policy's images or the video). Inference unchanged (p50 22.2-22.5 ms with a browser
+  watching vs 21.4-22.4 without).
 
 ## What to redo after changing configs/policy.yaml
 

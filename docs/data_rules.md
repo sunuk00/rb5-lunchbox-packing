@@ -165,10 +165,12 @@ Two stages (t3-b, user, 2026-10-29):
   carrot: its thick middle). `--sheet` wrote `data/eval/eval_sheet.csv` (the 20 trials in order).
 - **Order:** round 1 L1-L5, round 2 L2-L5, L1, round 3 L3 ... (each round starts one layout later), so a layout is
   not always early or late in a session.
-- **One trial = one program run:** `python -m rb5_lerobot.run <act_u4> --real` (moves to the ready pose, gripper
-  open) -> items on the marks -> one `g` -> `q` when all three are placed and the gripper has opened and lifted,
+- **One trial = one program run:** `python -m rb5_lerobot.run data/train/act_u4_20261030_054110 --real --trial N`
+  (N from `data/eval/eval_sheet.csv`; moves to the ready pose, gripper open; http://localhost:8080 shows the top
+  camera with the trial's layout photo and targets) -> items on the photo -> one `g` -> `q` when all three are placed and the gripper has opened and lifted,
   at the 180 s limit, or after an intervention (`space` for safety = a failed trial). Each trial leaves its own
-  csv / json / mp4. The trial number, layout and file name go into `data/eval/eval_sheet.csv`.
+  csv / json / mp4; the run writes its file name into the trial's row of `data/eval/eval_sheet.csv` (a row that
+  has one is refused). No tape marks: the saved photos are the reference.
 - **Complete success:** within 180 s and without help: the carrot in the black box, the Oreo in the large hole, the
   RITZ in the small hole, the gripper open. A snack counts as in its hole when it rests touching the inside of
   that hole, tilted or not (they are longer than the hole); on the rim or outside it does not.

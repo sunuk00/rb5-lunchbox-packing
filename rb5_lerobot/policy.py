@@ -33,8 +33,11 @@ Policies inside the process (spec dicts, so they can be pickled):
   {"kind": "act", "checkpoint": path, "device": "cuda", "task": text,
    "torch_threads": 4}                                                    a trained ACT (rec-6b)
 Any spec may have "cpu_cores": [first, last]: the policy process pins itself there (the servo process
-pins itself to other cores: they must not compete, rec-6b Simulation runs), and "video": path.mp4: from
-"ready" until the process ends, the cameras side by side are written there (t3-f, _VideoWriter).
+pins itself to other cores: they must not compete, rec-6b Simulation runs), "video": path.mp4: from
+"ready" until the process ends, the cameras side by side are written there (t3-f, _VideoWriter), and
+"preview": {"port", "camera", "layout", "layout_name", "M", "title"}: from "ready" a browser preview of that
+camera with the layout's targets and saved photo (t3-g, rb5_lerobot.layouts); info["preview"] is its URL or the
+reason it did not start.
 
 Observation tensors for ACT are made by observation_batch(), the same steps as LeRobot's
 prepare_observation_for_inference: image HWC uint8 RGB (the cameras stream rgb8, the recording saved the
@@ -337,7 +340,15 @@ def _policy_main(spec, cameras, fake_cameras, fps, state, out_q, cmd_q, reply_q)
     if spec.get("video") and readers:
         video = _VideoWriter(spec["video"], readers, fps, stop)
         video.start()
-    reply_q.put(("ready", {"cameras": info}))
+    preview = None
+    pv = spec.get("preview")
+    if pv and pv["camera"] in readers:      # t3-g: the layout preview (drawn on a copy, never on the policy input)
+        from rb5_lerobot.layouts import draw, load_photo, serve
+        cam_reader, M, photo = readers[pv["camera"]], np.array(pv["M"], dtype=float), load_photo(pv["layout_name"])
+        url, problem = serve(lambda: draw(cam_reader.latest()[0], pv["layout"], M, pv["title"], photo),
+                             pv["port"], pv["title"])
+        preview = url or problem
+    reply_q.put(("ready", {"cameras": info, "preview": preview}))
     period, n = 1.0 / fps, 0
     go = None        # the number of the current "go"; None: paused (no inference)
     try:
