@@ -181,10 +181,15 @@ Two stages (t3-b, user, 2026-10-29):
   4. correct: that container is the assigned one (carrot black box, Oreo large hole, RITZ small hole).
   An item that never reached a stage (e.g. the next items after a time-out on the carrot) is **not attempted**
   there, not a failure: each stage's rate is over the items that reached it. Sheet code per item (`carrot`,
-  `oreo`, `ritz`): `0` not attempted, `G` grasped only, `T` transported (dropped or on a rim), `P` placed in a
-  wrong container, `OK` correct. `misses`: closes on nothing; `recoveries`: items grasped after a miss.
-  Trial-level: `complete` (1 / 0), `order_error` (RITZ before Oreo), `wrong_hole`, `intervention`,
-  `completion_s` (g to the last release, successes only), `failure` (main cause).
+  `oreo`, `ritz`): `0` not attempted, `M` attempted but never lifted by the policy (added after the session:
+  e.g. closes away from it until the time limit, or lifted only after a hand re-placing), `G` grasped only, `T`
+  transported (dropped or on a rim), `P` placed in a wrong container, `OK` correct. `misses`: closes that did not
+  lift an item (all closes minus lifts); `recoveries`: items grasped after a miss on them.
+  Trial-level: `complete` (1 / 0), `order_error` (an item picked up and carried before an earlier item of the
+  task order, carrot -> Oreo -> RITZ; widened after the session from "RITZ before Oreo"), `wrong_hole`,
+  `intervention`, `completion_s` (g to the last release, successes only), `failure` (main cause).
+  Complete success stays a final-state criterion (order not required, as fixed before the session); the trials
+  that were also in order are reported beside it.
 - **Measures:** complete successes / 20 with a Wilson 95 % interval; per stage: successes / items that reached
   the stage (conditional); per item end to end: correct items / 60 (shows the cascade); grasp detail: first-try
   grasps / attempted items, successful closes / all closes, recovery rate (items grasped after at least one miss /

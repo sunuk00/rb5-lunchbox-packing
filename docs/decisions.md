@@ -3315,6 +3315,17 @@ container); an item that never reached a stage is not attempted there, and each 
 reaching it; the cascade shows in the end-to-end rate (correct items / 60) and the complete-success rate (/ 20).
 **Rejected:** counting every later stage as failed after a failed grasp (counts one failure several times and hides
 which stage is weak).
+**Addendum 3 (user, 2026-10-31, after the 20 trials): order and sheet codes.** Complete success stays the
+final-state criterion fixed before the session (order not required); changing it after seeing the results would be
+a post-hoc choice. Order is reported beside it: `order_error` is widened to any item picked up and carried before
+an earlier item of the task order (it was "RITZ before Oreo"; the three cases seen were the Oreo before the carrot,
+all in L5), and the paper also gives the complete successes that kept the demonstrated order (11 of 12). New item
+code `M`: attempted but never lifted by the policy (no code covered it). Trial 5 counts as an intervention (the
+operator re-placed a carrot that the gripper had pushed into an ungraspable pose), so it is not a success; its
+carrot is `M`. Operator calls on borderline final states: trial 15 carrot across the black box and the large hole
+counts as in the black box; trial 19 RITZ on the rim does not count; trials 1 and 13 count. **Rejected:** requiring
+the order for complete success (post-hoc); not counting order at all (the policy was trained on ordered
+demonstrations and the task asks for the order).
 
 ## PENDING
 
