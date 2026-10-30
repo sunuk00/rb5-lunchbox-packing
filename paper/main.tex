@@ -1,4 +1,4 @@
-% Application-paper draft: Sections I--IV are prose; later sections are outlines.
+% Application-paper draft: Sections I--V are prose; later sections are outlines.
 % IEEE CCWC 2027 is the provisional venue/year; see README.txt.
 % Uses the standard IEEE conference class without margin or font overrides.
 \documentclass[conference]{IEEEtran}
@@ -37,8 +37,8 @@ robotic manipulation, teleoperation, task-space imitation learning,
 lunchbox packing, system integration
 \end{IEEEkeywords}
 
-\noindent\textbf{Working draft.} Sections~I--IV contain manuscript prose;
-the abstract and Sections~V--VII remain writing plans. Lunchbox packing
+\noindent\textbf{Working draft.} Sections~I--V contain manuscript prose;
+the abstract and Sections~VI--VII remain writing plans. Lunchbox packing
 is the target application; the repository currently documents a block-to-box
 pilot. Application experiments are pending. The final manuscript targets
 seven pages including references. Remove this editorial note before submission.
@@ -159,48 +159,7 @@ existing method.
 
 \input{sections/04_workflow}
 
-\section{Experimental Setup and Evaluation Protocol}
-\label{sec:experiments}
-\subsection{Lunchbox Task and Test Conditions}
-After one-item feasibility trials, evaluate complete packing from five
-predefined source layouts, four repetitions each: 20 complete trials per
-policy and condition. Use independent resets, a fixed start pose, and an
-initially open gripper. Choose a whole-task wall-clock deadline during pilot
-work and freeze it before evaluation; 120~s is a provisional starting value,
-not a measured result or an existing lunchbox protocol.
-
-A complete success requires every selected item to remain in its assigned
-compartment with the gripper released before the deadline and without
-operator assistance. Also report per-item grasp and placement success with
-their actual attempted-item denominators. Do not equate three successful
-isolated transfers with one uninterrupted complete packing trial.
-
-Prescribe the layout sequence before testing and counterbalance it when
-comparing conditions. Use test episodes that were not used for checkpoint
-selection. Split training and validation by episode or session rather than
-by adjacent frames. Report a single-seed study as such; additional independent
-training seeds strengthen repeatability but must not be implied.
-
-\subsection{Primary and Supporting Measures}
-\textbf{Primary:} complete-packing and per-item success counts, trial counts,
-success-rate confidence intervals, successful-trial completion time, and
-failure categories. Report failures separately from successful-trial time
-statistics so that fast failures do not appear advantageous.
-
-\textbf{Supporting:} demonstration duration and rejected episodes, inference
-latency, servo interval, late-cycle rate, and intervention counts. Compute
-inference statistics once per prediction, not once per servo row, because
-the same prediction can appear in several rows.
-
-\subsection{Optional Application Comparisons}
-Prioritize the complete application evaluation. If time permits, compare
-front-only images with all three cameras, retraining both conditions on
-the same episodes with the same split and training budget. A demonstration
-count study is another option. Treat operator teleoperation time as a
-reference condition. Joint-output and task-space-output policies need not be
-the main comparison for this application paper. If superiority of task-space
-actions is claimed, add a matched follower-joint-action baseline: dissimilar
-leader kinematics do not make follower-joint imitation learning impossible.
+\input{sections/05_experiments}
 
 \section{Results and Discussion}
 \label{sec:results}
