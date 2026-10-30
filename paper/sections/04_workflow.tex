@@ -49,8 +49,7 @@ and one snack per episode, normal (u1) and with recovery (u2). A policy trained
 on them had no demonstrated action once both snacks lay on the table, so all
 later episodes contain all three items: normal (u4n) and recovery (u4r). The
 earlier episodes remain valid under the same rule as scenes with one snack
-absent. The evaluated datasets are u4a, without three-item recovery episodes,
-and u4, which adds them. Of 66 attempts in the three-item normal session, 51
+absent. The evaluated policy is trained on u4, all 140 episodes. Of 66 attempts in the three-item normal session, 51
 were kept, and 7 of these include a natural re-grasp. Cameras, lighting,
 container positions, and teleoperation settings were the same in every session.
 
@@ -116,7 +115,7 @@ actions, and images are normalized by their dataset mean and standard
 deviation. Training uses a batch size of 8, a constant learning rate of
 $10^{-5}$, and 100{,}000 steps, about 3.5 passes over u4. On the host's
 laptop GPU this takes about 7~h. The checkpoint at the final step is
-evaluated.
+evaluated; no checkpoint is selected by test results.
 
 At run time, the policy process predicts a new chunk from the latest images
 and robot state whenever the previous inference has finished, at most once

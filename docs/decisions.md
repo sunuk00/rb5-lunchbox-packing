@@ -3293,6 +3293,20 @@ about 55 kB/s. **Rejected:** opening the cameras in a second program (a camera i
 full 640x480 tiles (larger and slower, and 320x240 is what the policy sees); a phone video only (not aligned
 with the log; still useful for figures).
 
+## 2026-10-31 — t3-g: the paper evaluates act_u4 alone, 5 layouts x 4 rounds
+
+**Decision (user):** the paper reports one policy, act_u4 100000 (all 140 episodes, last checkpoint), on 5 fixed
+layouts x 4 rounds = 20 trials; no u4a vs u4 table. Protocol and layouts in docs/data_rules.md "Evaluation": one
+program run per trial from the ready pose, one `g`, 180 s, complete success with snacks counted when they rest
+inside their hole (tilted is fine), per-item and recovery measures from the run video. Layouts were chosen on the
+`top` image through a robot-to-pixel map fitted to 10 grasp positions of u4n (rms 18 px, about 2 cm): the nearest
+item varies (carrot 2, Oreo 1, RITZ 2) and the RITZ is nearer than the Oreo in 3 of 5. **Reason:** an application
+paper; the same robot time gives 20 trials of one policy instead of 10 + 10, and the outline puts the complete
+application evaluation first. The paper therefore does not claim that the recovery demonstrations improve the
+success rate; it reports the recovery observed. Wording: "the final policy trained on all demonstrations", not
+"the best". **Rejected:** u4a vs u4 with 10 trials each (wide intervals for both; can be added later);
+random layouts per trial (not repeatable).
+
 ## PENDING
 
 - **14: RB-Y1 self-collision check during teleop.** Example 35 blocks the arm command when the

@@ -141,22 +141,45 @@ Two stages (t3-b, user, 2026-10-29):
   otherwise a typed yes is needed. Reference, measured value and settings go into episodes.json.
 - 640x480 @ 30 for all three (the dataset resizes them to 320x240, `configs/policy.yaml`).
 
-## Evaluation (after training, the same for every policy)
-- **5 placements** of the three objects (t3-d), chosen and marked before the `u4` training (spread over the
-  `top` view, not where demonstrations were placed on purpose, the same for every policy) x 2 = 10 trials
-  first (x 2 more = 20 for the paper).
-- Start at the ready pose, gripper open.
-- **Success**: the carrot in the black box, the Oreo in the large hole and the RITZ in the small hole,
-  gripper open, within **180 s** (t3-d; `run.time_limit_s` 180; 120 s until t3-c). Note also each object
-  alone (grasped, placed), the order (Oreo before RITZ) and a snack in the **wrong hole** (counted apart from
-  a missed or dropped snack: it measures the sorting).
-- **After a missed grasp**, note what the policy does: opens and grasps again (recovery), how many tries in a
-  row and in which direction it missed, or carries the empty gripper on. (Until t3-c the comparison was u1
-  (49) vs u3 (65), one snack per episode.)
-- Record every trial on video (the policy runner has no recording yet: to be added), success / failure noted
-  per trial.
+## Evaluation (t3-g, 2026-10-31: the paper's evaluation of act_u4)
+- **Policy:** act_u4_20261030_054110 checkpoint 100000 (trained on all 140 episodes, the last checkpoint; not
+  chosen by any test result). No u4a comparison in the paper (user, 2026-10-31); it may be added later.
+- **5 layouts x 4 rounds = 20 trials.** Targets (robot base frame, mm; C carrot, O Oreo, R RITZ):
+
+  | Layout | C (x, y) | O (x, y) | R (x, y) | nearest -> farthest | why |
+  |---|---|---|---|---|---|
+  | L1 | (80, -450) | (250, -690) | (-200, -600) | C R O | RITZ nearer than Oreo |
+  | L2 | (200, -480) | (-180, -580) | (100, -740) | C O R | the plain case |
+  | L3 | (30, -700) | (150, -460) | (-220, -640) | O R C | Oreo nearest |
+  | L4 | (280, -620) | (-200, -680) | (60, -470) | R C O | RITZ nearest, Oreo far |
+  | L5 | (250, -560) | (80, -720) | (-60, -560) | R C O | RITZ nearest |
+
+  Nearest item: carrot 2, Oreo 1, RITZ 2; RITZ nearer than Oreo in 3 (the order error of run 130515). All inside
+  the u4n grasp positions, r 457-747 mm, items at least 21 cm apart, none under the gripper at the ready pose
+  (it hides that corner of the `top` view). Orientation as in the demonstrations (grasped without wrist
+  rotation). The targets only help to find the spots: the **taped marks and the saved `top` photo of each layout
+  are the reference** (the robot-to-image map is good to about 2 cm).
+- **Order:** round 1 L1-L5, round 2 L2-L5, L1, round 3 L3 ... (each round starts one layout later), so a layout is
+  not always early or late in a session.
+- **One trial = one program run:** `python -m rb5_lerobot.run <act_u4> --real` (moves to the ready pose, gripper
+  open) -> items on the marks -> one `g` -> `q` when all three are placed and the gripper has opened and lifted,
+  at the 180 s limit, or after an intervention (`space` for safety = a failed trial). Each trial leaves its own
+  csv / json / mp4. The trial number, layout and file name go into `data/eval/eval_sheet.csv`.
+- **Complete success:** within 180 s and without help: the carrot in the black box, the Oreo in the large hole, the
+  RITZ in the small hole, the gripper open. A snack counts as in its hole when it rests touching the inside of
+  that hole, tilted or not (they are longer than the hole); on the rim or outside it does not.
+- **Per item:** grasped (on the first try or after how many), placed in the right container; after a miss:
+  re-grasped (recovery) or carried on empty. **Errors:** order (RITZ before Oreo), wrong hole, dropped, hit /
+  intervention, time limit, repeated misses. Judged from the video after the session.
+- **Measures:** complete successes / 20 with a Wilson 95 % interval; per-item grasp and placement success over
+  the items actually attempted; first-try grasps; recovery rate (misses followed by a successful re-grasp / all
+  misses); order and wrong-hole errors; completion time of the successful trials (g to the last release); failure
+  categories. Reference: teleoperation 58.8 s per three-item episode (u4n). Supporting: inference time, servo
+  interval, late cycles, holds.
 
 ## Before every session (in addition to docs/real_first_run_checklist.md)
+- [ ] No training or other GPU job running, laptop on mains power (run 130515: inference 40 ms instead of 22 ms
+      right after a training); check the inference time printed before the first `g`.
 - [ ] Collision detection ON, emergency stop within reach.
 - [ ] D435 on USB 3 (5000M); D435 and C270 mounts at their marks; the webcams on different USB ports
       (docs/teleop_guide.md: USB autosuspend).
