@@ -44,6 +44,7 @@ Prediction error = `rb5_lerobot.check` on 200 training frames, median position e
 | run_real_20261029_023402, _024159 | act_t1 030000 | placed well, grasped poorly, no recovery after a miss | t2 |
 | run_real_20261029_120825 | act_u3 030000 | three objects on the table: lost after the carrot; after a miss reopened and retried but 5-7 cm further each time (10 in a row) | t3-d |
 | run_real_20261030_025146 | act_u4a 100000 | 2 x 180 s, objects reset inside a run (4 trials): order right in 2 of 3 finished trials (once RITZ before Oreo), holes always right; first-try grasps 6 of 11; after a miss retried at about the same spot (0.4-4 cm) and got it after 2-8 tries | t3-e |
+| run_real_20261030_130515 | act_u4 100000 | 2 x 180 s, objects reset at random moments inside a run (not separable into trials); inference p50 39.6 ms (17 ms offline; run 8 min after training ended), no late cycles: some RITZ before Oreo, and RITZ put in the large hole; 3 sequences carrot -> Oreo -> RITZ seen in the log (one with all first-try grasps); after a miss moved 1-7 cm before retrying, but once 8 carrot misses in a row creeping 0.5-3 cm each; recovery judged still weak by the operator | t3-d |
 
 Comparisons planned for the paper: u1 vs u3 (recovery, one snack), u4a vs u4 (recovery, three objects).
 From the next evaluation on: one `g` per trial (objects reset while holding), so each trial has its own
