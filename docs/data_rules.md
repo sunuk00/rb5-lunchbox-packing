@@ -20,6 +20,13 @@ dataset: they are the cases of the t3-d order with one snack missing (t3-d).
   | Carrot | the big black box |
   | Oreo | the meal box, **large** hole |
   | RITZ | the meal box, **small** hole |
+
+  Sizes (user, 2026-10-30, cm): carrot (model) 19 x 4 at its thickest; Oreo (packaged) 14 x 5.5; RITZ
+  (packaged) 15 x 4; large hole 12.5 x 12.5, small hole 12.5 x 5.5, both 4 deep; gripper fully open 5.5. Both
+  snacks are longer than their hole: the RITZ rests tilted, partly above the rim; the Oreo fits because its
+  wrapper ends fold. The packages deform, so the gripper must close on every item. Mean release positions
+  (44 normal three-object episodes, real_20261029_123638): black box (394, -359), large hole (468, -196),
+  small hole (370, -178) mm.
 - **Snacks: Oreo and RITZ** (t3-a, 2026-10-29: Nutter Butter was too big). The hole depends on the kind,
   which the cameras see: one right action, learned from the snack's look (a sorting task).
 - **Three objects in every new episode, always in the order carrot -> Oreo -> RITZ** (t3-d, user: a fixed
