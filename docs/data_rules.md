@@ -159,6 +159,10 @@ Two stages (t3-b, user, 2026-10-29):
   (it hides that corner of the `top` view). Orientation as in the demonstrations (grasped without wrist
   rotation). The targets only help to find the spots: the **taped marks and the saved `top` photo of each layout
   are the reference** (the robot-to-image map is good to about 2 cm).
+  Placing: `python scripts/37_layout_guide.py` (top camera only, robot at the ready pose) shows the live top view
+  in a browser with the targets of a layout (keys 1-5) and saves its photo (s) to `data/eval/layouts/L<n>.jpg`;
+  a saved photo is blended in, to put the items back between trials. The circle is the grasp point (the
+  carrot: its thick middle). `--sheet` wrote `data/eval/eval_sheet.csv` (the 20 trials in order).
 - **Order:** round 1 L1-L5, round 2 L2-L5, L1, round 3 L3 ... (each round starts one layout later), so a layout is
   not always early or late in a session.
 - **One trial = one program run:** `python -m rb5_lerobot.run <act_u4> --real` (moves to the ready pose, gripper

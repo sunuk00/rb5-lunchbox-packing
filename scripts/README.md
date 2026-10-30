@@ -489,3 +489,14 @@ Try: hands off, full pulls, a slow full pull with the clutch button held, holdin
 held. Summary: rest value and noise, full value (suggested `trigger_full`), the largest trigger with the button
 held, clutch drops (button released with the trigger over 10 %), the steadiest partial 1 s. Log:
 `data/leader/right_trigger_<time>.csv`.
+
+### 37 layout guide (evaluation layouts, t3-g)
+Camera only (the `top` camera with the recording's fixed settings; no robot, no gripper). Shows the live top view
+in a browser with the targets of an evaluation layout (configs/eval_layouts.yaml: a circle per item at its grasp
+point) and saves the layout's reference photo; a saved photo is blended in at half strength.
+```bash
+python scripts/37_layout_guide.py [--port 8080]   # then http://localhost:8080; keys 1-5 layout, s save, q quit
+python scripts/37_layout_guide.py --sheet         # writes data/eval/eval_sheet.csv (20 trials; never overwrites)
+```
+Keep the robot at the ready pose. Not while a policy run has the cameras open. Photos:
+`data/eval/layouts/L<n>.jpg`.

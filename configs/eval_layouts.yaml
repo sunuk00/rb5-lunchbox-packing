@@ -1,0 +1,15 @@
+# t3-g (2026-10-31): the 5 evaluation layouts of docs/data_rules.md "Evaluation" (scripts/37_layout_guide.py).
+# Targets in the RB5 base frame [mm]: grasp points of the carrot (C), Oreo (O) and RITZ (R). They only help to
+# find the spots; the taped marks and the saved top photos (data/eval/layouts/) are the reference.
+layouts:
+  L1: {C: [80, -450], O: [250, -690], R: [-200, -600]}     # C R O: RITZ nearer than Oreo
+  L2: {C: [200, -480], O: [-180, -580], R: [100, -740]}    # C O R: the plain case
+  L3: {C: [30, -700], O: [150, -460], R: [-220, -640]}     # O R C: Oreo nearest
+  L4: {C: [280, -620], O: [-200, -680], R: [60, -470]}     # R C O: RITZ nearest, Oreo far
+  L5: {C: [250, -560], O: [80, -720], R: [-60, -560]}      # R C O: RITZ nearest
+rounds: 4            # each round starts one layout later: L1-L5, L2-L5 L1, ...
+# top camera pixel (u, v) = M @ [x, y, 1]: affine fit to 10 grasp positions of u4n (real_20261029_123638, eps 1, 2,
+# 3, 15: item centres in the first top frame vs the target at the close), rms 18 px (about 2 cm)
+top_pixel_from_xy:
+  - [0.8411, 0.00264, 215.3]
+  - [-0.0904, -0.8712, -273.0]
