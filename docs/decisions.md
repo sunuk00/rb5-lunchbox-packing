@@ -3323,7 +3323,9 @@ all in L5), and the paper also gives the complete successes that kept the demons
 code `M`: attempted but never lifted by the policy (no code covered it). Trial 5 counts as an intervention (the
 operator re-placed a carrot that the gripper had pushed into an ungraspable pose), so it is not a success; its
 carrot is `M`. Operator calls on borderline final states: trial 15 carrot across the black box and the large hole
-counts as in the black box; trial 19 RITZ on the rim does not count; trials 1 and 13 count. **Rejected:** requiring
+counts as in the black box; trial 19 RITZ on the rim does not count; trials 1 and 13 count. L3 failures: in trials 7 and 11 the Oreo was
+grasped and dropped on the way, then neither it nor the RITZ was grasped (RITZ `M`); in trial 20 the Oreo was never
+grasped (`M`, RITZ not attempted). **Rejected:** requiring
 the order for complete success (post-hoc); not counting order at all (the policy was trained on ordered
 demonstrations and the task asks for the order).
 
