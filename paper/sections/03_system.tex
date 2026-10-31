@@ -110,21 +110,15 @@ guarantees. A cycle whose command would be sent more than 30~ms after the
 previous one keeps the previous target, and three such cycles in a row stop
 the run.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\fbox{\parbox[c][0.62\columnwidth][c]{0.95\columnwidth}{\centering
-Diagram placeholder.\\[3pt]
-Recording: leader FK $\rightarrow$ clutch-relative cylindrical mapping $\rightarrow$
-command shaping $\rightarrow$ \texttt{move\_servo\_l} (50~Hz); gripper thread;
-camera process (30~fps JPEG); logs with one clock $\rightarrow$ 30~Hz dataset.\\[3pt]
-Execution: cameras + robot state $\rightarrow$ ACT (policy process, GPU)
-$\rightarrow$ time-stamped chunks $\rightarrow$ servo process (50~Hz) $\rightarrow$
-same command shaping $\rightarrow$ \texttt{move\_servo\_l}; gripper thread.}}
+\includegraphics[width=\textwidth]{figures/fig_architecture.pdf}
 \caption{Recording and autonomous-execution paths. Both send absolute
 Cartesian targets through the same command shaping; the recorded action is
 the shaped target.}
 \label{fig:architecture}
-\end{figure}
+\end{figure*}
+% Made by paper/figures/make_fig_architecture.py (photos: photo_leader.png, photo_rb5.png, our own).
 
 \subsection{Dissimilar Leader--Follower Interface}
 \label{sec:interface}
