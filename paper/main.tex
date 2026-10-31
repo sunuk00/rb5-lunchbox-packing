@@ -70,16 +70,18 @@ and demonstrated actions. Action Chunking with Transformers
 how action-sequence prediction can support manipulation from visual input.
 Applying a learned policy requires a demonstration-to-execution workflow in
 which camera observations, measured robot states, and commanded actions have
-consistent representations and explicit timing. We study this integration
-using reusable model food items and a compartmentalized container. The
-practical question is how the workflow supports completion of the entire
-packing sequence under specified workspace and object conditions.
+consistent representations and explicit timing. We study this integration on
+a three-item task: a model carrot goes into a black box, and two packaged
+snacks, an Oreo and a RITZ, go into the large and small holes of a meal box,
+in a fixed order. The policy must therefore tell the snacks apart by sight to
+choose the compartment.
 
 Our hardware introduces a further integration requirement: the RB-Y1 leader
 arm has seven joints, whereas the RB5 follower has six. Their different
 kinematic structures do not admit direct one-to-one joint copying. We use
-leader forward kinematics and clutch-relative Cartesian mapping to command
-the follower's tool position. This separates the operator's arm configuration
+leader forward kinematics and a clutch-relative mapping in cylindrical
+coordinates about the follower's base axis to command the follower's tool
+position. This separates the operator's arm configuration
 from the Cartesian target delivered to the RB5 and allows demonstrations
 to be collected with the available leader hardware. The resulting policy
 still uses follower-specific state observations; the task-space interface
@@ -96,18 +98,18 @@ orientation supplied by a predefined rule. The contributions are:
 \begin{enumerate}
 \item An integrated platform connecting a kinematically dissimilar leader
 and follower, multi-view visual observations, and gripper control for a
-model-food lunchbox-packing application.
+lunchbox-packing application.
 \item A demonstration-to-deployment workflow that preserves the Cartesian
 position and gripper action representation across episode recording,
 dataset conversion, ACT training, and autonomous command execution.
-\item An application evaluation protocol that distinguishes individual
-grasp and placement outcomes from complete-packing success and records
-completion time, interventions, and failure modes.
+\item A real-robot evaluation of 20 trials over five source layouts, scored
+per item in four stages, which shows reliable placement and locates the
+remaining failures in grasping and in states absent from the demonstrations.
 \end{enumerate}
-% Replace the third item with the supported empirical contribution after trials.
-The study is scoped to selected model foods, a fixed container, prescribed
-source layouts, and a predefined packing order. This scope makes complete
-task execution the central application criterion.
+In these trials, the policy completed 12 packings and placed 49 of 60 items
+correctly, with no item released into a wrong compartment. The study is
+scoped to these three items, fixed containers, source layouts within the
+demonstrated region, and a predefined packing order.
 
 \section{Related Work}
 \label{sec:related}
@@ -122,8 +124,9 @@ predicting packing order. These studies address complementary aspects of
 packing: coordination of application components and selection of object
 sequence. Our target is the execution of demonstrated pick-and-place motions
 on a physical manipulator under a prescribed order and compartment assignment.
-Model foods provide a bounded laboratory task in which grasp, transfer,
-release, and complete-packing outcomes can be assessed separately.
+A model carrot and two packaged snacks provide a bounded laboratory task in
+which grasp, transfer, release, and complete-packing outcomes can be assessed
+separately.
 
 \subsection{Interfaces for Demonstration Collection}
 ALOHA~\cite{zhao2023act} uses approximately scaled leader and follower arms
