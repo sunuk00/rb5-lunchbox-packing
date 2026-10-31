@@ -58,6 +58,9 @@ def photo(ax, name, x0, y0, x1, y1):
         label(ax, (x0 + x1) / 2, (y0 + y1) / 2, f"{name}\n(missing)", color="#555555")
         return
     img = plt.imread(p)
+    if img.shape[2] == 3:                                  # no transparency: trim the white margins
+        rows, cols = (img < 0.94).any(axis=2).nonzero()
+        img = img[rows.min():rows.max() + 1, cols.min():cols.max() + 1]
     ih, iw = img.shape[:2]
     w, h = x1 - x0, y1 - y0
     if iw / ih > w / h:
@@ -80,9 +83,9 @@ def main():
     ax.set_axis_off()
 
     # Recording: leader arm -> PC -> control box -> RB5
-    box(ax, 0.3, 27, 12, 22.5)
+    box(ax, 0.3, 27, 12, 22.5, fc="white")   # the leader photo has a white background
     label(ax, 6.3, 47.2, "Leader arm\n(RB-Y1)", size=TITLE)
-    photo(ax, "photo_leader.png", 1.5, 32.5, 11.1, 44.5)
+    photo(ax, "photo_leader.png", 1.5, 32.0, 11.1, 45.3)
     label(ax, 6.3, 29.8, "Dynamixel,\nU2D2, 2 Mbps")
     arrow(ax, [(12.3, 38.5), (21, 38.5)])
     label(ax, 16.65, 41.3, "joint angles,\nclutch, trigger", italic=True)
