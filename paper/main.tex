@@ -137,7 +137,9 @@ representation with inference-time latency matching to support deployment
 across robot platforms. These systems illustrate how the collection interface
 and the policy's observation and action representations shape deployment.
 In our setup, the seven-joint leader and six-joint follower are connected
-through a Cartesian teleoperation interface. Demonstrations are recorded
+through a task-space teleoperation interface that maps the leader's wrist
+motion to the follower's tool position in cylindrical coordinates about the
+base axis. Demonstrations are recorded
 while the RB5 executes the task, and the policy uses its joint and gripper
 state together with RGB observations. The role of this interface is to
 accommodate the available dissimilar hardware within one application system;
