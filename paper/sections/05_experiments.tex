@@ -1,4 +1,4 @@
-% Section V: Experimental setup and evaluation protocol (target 0.90 pages with Table III).
+% Section V: Experimental setup and evaluation protocol (target 0.90 pages with the layout figure).
 % Sources: docs/data_rules.md "Evaluation", docs/decisions.md t3-g (and addenda), configs/eval_layouts.yaml,
 % data/eval/eval_sheet.csv. Results: Section VI.
 \section{Experimental Setup and Evaluation Protocol}
@@ -12,7 +12,7 @@ condition is evaluated; the study measures whether the complete application
 performs the packing task and how it fails.
 
 The items are placed in five predefined source layouts
-(Table~\ref{tab:layouts}). Each layout fixes the grasp point of every item in
+(Fig.~\ref{fig:layouts}). Each layout fixes the grasp point of every item in
 the robot base frame, inside the region where items were grasped in the
 three-item demonstrations (457--747~mm from the base axis), with the items at
 least 21~cm apart and oriented as in the demonstrations. The layouts vary
@@ -22,31 +22,26 @@ picking the nearest item first would break the packing order. The containers
 stay where they were during data collection.
 
 The table carries no marks. Instead, a top-camera photograph was saved for
-each layout once its items were in place. Before each trial, the execution
+each layout once its items were in place (Fig.~\ref{fig:layouts}). Before each trial, the execution
 program shows the live top image with this photograph blended in and a circle
 at each grasp point, located by an affine map from the base frame to the image
 fitted to ten demonstrated grasps (rms error 18~px, about 2~cm on the table).
 The operator places the items to match the photograph.
 
-\begin{table}[t]
-\caption{Source Layouts: Grasp Points $(x, y)$ in the Base Frame (mm)}
-\label{tab:layouts}
+\begin{figure*}[t]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lllll@{}}
-\toprule
-Layout & Carrot & Oreo & RITZ & Nearest first\\
-\midrule
-L1 & $(80, -450)$ & $(250, -690)$ & $(-200, -600)$ & C, R, O\\
-L2 & $(200, -480)$ & $(-180, -580)$ & $(100, -740)$ & C, O, R\\
-L3 & $(30, -700)$ & $(150, -460)$ & $(-220, -640)$ & O, R, C\\
-L4 & $(280, -620)$ & $(-200, -680)$ & $(60, -470)$ & R, C, O\\
-L5 & $(250, -560)$ & $(80, -720)$ & $(-60, -560)$ & R, C, O\\
-\bottomrule
-\end{tabular}
-% From configs/eval_layouts.yaml. C carrot, O Oreo, R RITZ. A top-view figure may replace this table.
-\end{table}
+\includegraphics[width=\textwidth]{figures/fig_layouts.pdf}
+\caption{The five source layouts, seen by the top camera in the photographs
+used to place the items. Each label lists the items from nearest to farthest
+from the robot base axis (C carrot, O Oreo, R RITZ). The gripper at the ready
+pose is at the upper left and the black box at the upper right; the meal box
+lies outside the view.}
+\label{fig:layouts}
+\end{figure*}
+% Made by paper/figures/make_fig_layouts.py from data/eval/layouts/L*.jpg. Grasp points (x, y) in the base
+% frame, mm (configs/eval_layouts.yaml): L1 C(80,-450) O(250,-690) R(-200,-600); L2 C(200,-480) O(-180,-580)
+% R(100,-740); L3 C(30,-700) O(150,-460) R(-220,-640); L4 C(280,-620) O(-200,-680) R(60,-470);
+% L5 C(250,-560) O(80,-720) R(-60,-560).
 
 \subsection{Trial Procedure}
 \label{sec:trials}
