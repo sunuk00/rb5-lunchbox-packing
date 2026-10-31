@@ -11,8 +11,9 @@ manipulator. A host computer sends commands to its control box and receives
 the robot state over two TCP channels through the vendor's Python API.
 The operator uses the right arm of an RB-Y1 leader with seven Dynamixel joints.
 Its handle carries a clutch button, a mode button, and an analog trigger.
-The leader is read without torque while the clutch is pressed. When the
-clutch is released, its joints are torqued to hold their pose. The end
+The leader is only read; its motors are never torqued. While the clutch is
+released, the follower target stays fixed, so the leader may move freely
+without affecting the robot. The end
 effector is an in-house 3D-printed parallel gripper driven by one Dynamixel
 MX-106 actuator on a separate serial bus.
 
