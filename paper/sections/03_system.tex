@@ -85,9 +85,10 @@ TCP & $(0,-187,-40)$~mm from the flange, no rotation offset\\
 
 \subsection{Software Architecture}
 \label{sec:architecture}
-All software runs on the host as Python processes, arranged in a recording
-path and an autonomous-execution path that share the camera, gripper, and
-command-shaping components (Fig.~\ref{fig:architecture}).
+All of our software runs on the host as Python processes, organized into a
+recording path and an autonomous-execution path that reuse the same camera,
+gripper, and command-shaping modules (Fig.~\ref{fig:architecture};
+Section~\ref{sec:limits}).
 
 In the recording path, a teleoperation process runs a 50~Hz cycle.
 In each cycle, it reads the leader joints and the latest RB5 state,
