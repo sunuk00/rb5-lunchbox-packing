@@ -54,9 +54,9 @@ the operator places the items, and a single start key begins autonomous
 execution. The operator then touches neither the items nor the robot. The trial
 ends when all items have been released and the gripper has lifted, at the
 180-s limit of Section~\ref{sec:execution}, or when the operator intervenes,
-which counts as a failure. The controller's collision detection is enabled
-with its threshold at 30\%.
-% TODO: tool mass set on the controller (to confirm on the tablet).
+which counts as a failure. The controller settings are those of
+Section~\ref{sec:limits}: collision detection at a 30\% threshold and a tool
+mass of 0~kg.
 Each trial leaves its own log of robot states, targets, gripper commands, and
 inference times, together with a video of the three camera views whose frame
 times are stored on the clock of the log.

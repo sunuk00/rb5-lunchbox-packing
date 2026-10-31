@@ -161,8 +161,8 @@ python -m rb5_lerobot.run $OUT --task "pick the green block and place it in the 
 
 ## 6. Real run (p3-c)
 
-**The real arm follows the policy on its own.** The controller has collision detection Off and tool mass
-0 kg. Do a Simulation run of the same checkpoint first.
+**The real arm follows the policy on its own.** The controller has collision detection On (threshold 30 %,
+check it on the tablet before the session) and tool mass 0 kg. Do a Simulation run of the same checkpoint first.
 
 Checklist: tablet in Real mode allowed, nobody inside the reach of the arm, **hand on the emergency stop**,
 the real arm at the ready pose (or let the run move it there), block in the square, gripper powered and open,

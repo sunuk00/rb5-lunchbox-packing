@@ -1,8 +1,8 @@
 """rec-6b / p3-c: run a trained ACT policy on the RB5 (rb5_lerobot/policy.py), in Simulation or (--real) REAL.
 
 MOVES THE RB5 AND THE GRIPPER (the real gripper moves in Simulation too, as in the teleop; --no-gripper runs
-without it). --real moves the real arm on its own: the controller has collision detection Off and tool mass
-0 kg; keep the emergency stop within reach. The gripper follows the policy's gripper action at once while
+without it). --real moves the real arm on its own: the controller has collision detection On (threshold 30 %)
+and tool mass 0 kg; keep the emergency stop within reach. The gripper follows the policy's gripper action at once while
 running (no catch: the dataset's gripper action is what the gripper did).
 
 Run in the `lerobot` conda env, from the repository root:
@@ -117,8 +117,8 @@ def main():
     rc = pc.run
     print(f"Mode: {mode}   robot settings: {robot_config}")
     if real:
-        print("REAL mode: the RB5 follows the policy on its own. Collision detection is Off and the tool mass is "
-              "0 kg on the controller.\nKeep the emergency stop within reach; space holds, q quits.")
+        print("REAL mode: the RB5 follows the policy on its own. Collision detection should be On (threshold 30 %) "
+              "and the tool mass is 0 kg on the controller.\nKeep the emergency stop within reach; space holds, q quits.")
         if not ask("Type REAL to continue: ", "REAL"):
             raise SystemExit("Cancelled.")
     task = args.task or s.record.task

@@ -79,7 +79,7 @@ TCP & $(0,-187,-40)$~mm from the flange, no rotation offset\\
 \end{tabular}
 % TCP: get_tcp_info on the controller, checked at every Real start (teleop/preflight.py check_tcp_offset,
 % tolerance 1 mm); configs/real.yaml expected_offset_mm unchanged since 2026-10-12 (before every dataset).
-% TODO: tool mass and collision-detection setting used in the evaluation.
+% Controller collision detection and tool mass: text of Section III-E (sec:limits).
 \end{table}
 
 \subsection{Software Architecture}
@@ -213,5 +213,8 @@ confirmation. During operation, stale robot state, repeated leader read
 failures, or repeated late cycles stop the robot.
 The limiter is not collision avoidance and offers no formal safety
 guarantee. No collision-aware planner is used, and the controller's
-internal motion generation is outside the scope of this paper.
-% TODO: state the controller collision-detection setting and tool mass used in the evaluation.
+internal motion generation is outside the scope of this paper. During the
+evaluation, the controller's collision detection was enabled with its
+threshold at 30\%, and the tool mass was set to 0~kg, so the gripper's weight
+was not part of the controller's model.
+% Tablet settings confirmed by the user (2026-10-31): collision detection on, threshold 30 %, tool mass 0.000 kg.
