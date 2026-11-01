@@ -9,8 +9,12 @@
 The follower is a six-joint Rainbow Robotics RB5-850 collaborative
 manipulator. A host computer sends commands to its control box and receives
 the robot state over two TCP channels through the vendor's Python API.
-The operator uses the right arm of an RB-Y1 leader with seven Dynamixel joints.
-Its handle carries a clutch button, a mode button, and an analog trigger.
+The operator moves the right arm of an RB-Y1 leader, which has seven
+Dynamixel joints, with the right hand. The button on its handle is the clutch:
+the follower moves only while it is held. The left hand holds the handle of
+the leader's left arm, whose joints are not used; its button selects the
+rotate mode (Section~\ref{sec:interface}) while held, and its analog trigger
+sets the gripper opening, closed when released and fully open when pulled.
 The leader is only read; its motors are never torqued. While the clutch is
 released, the follower target stays fixed, so the leader may move freely
 without affecting the robot. The end
@@ -138,7 +142,7 @@ then drives a single follower coordinate. In the normal mode,
 \phi = \phi_0,\quad r = r_0 + s\,\Delta x_L,\quad z = z_0 + s\,\Delta z_L,
 \label{eq:normal}
 \end{equation}
-and while the mode button is held,
+and while the mode button is held (the rotate mode),
 \begin{equation}
 \phi = \phi_0 + k\,\Delta y_L,\quad r = r_0,\quad z = z_0,
 \label{eq:rotate}
