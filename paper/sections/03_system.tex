@@ -145,8 +145,9 @@ and while the mode button is held,
 \end{equation}
 with $s=1$ and $k=0.3^\circ$/mm. The commanded position is
 $\mathbf{p}_d=(r\cos\phi,\ r\sin\phi,\ z)$ in the base frame. Releasing the
-clutch freezes the target, and the next press re-anchors both references, so
-the operator can reposition the hand without moving the robot.
+clutch freezes the target. The next press, and every press or release of the
+mode button, re-anchors both references, so the target never jumps and the
+operator can reposition the hand without moving the robot.
 
 Early teleoperation trials used a Cartesian mapping,
 $\mathbf{p}_d=\mathbf{p}_d(t_0)+s\,\Delta\mathbf{p}_L$. In these trials, the
