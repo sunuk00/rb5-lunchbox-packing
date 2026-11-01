@@ -48,11 +48,12 @@ following grasp (median 8.5~cm, center to center), and the empty lift is
 \emph{Collection stages.}
 Data were collected in stages, so that each policy's failures could motivate
 the next set (Table~\ref{tab:datasets}). The first stages placed the carrot
-and one snack per episode, normal (u1) and with recovery (u2). A policy trained
+and one snack per episode, normal (2N) and with recovery (2R). A policy trained
 on them had no demonstrated action once both snacks lay on the table, so all
-later episodes contain all three items: normal (u4n) and recovery (u4r). The
+later episodes contain all three items: normal (3N) and recovery (3R). The
 earlier episodes remain valid under the same rule as scenes with one snack
-absent. The evaluated policy is trained on u4, all 140 episodes. Of 66 attempts in the three-item normal session, 51
+absent. The evaluated policy is trained on the union of the four sets,
+\emph{all} (140 episodes). Of 66 attempts in the three-item normal session, 51
 were kept, and 7 of these include a natural re-grasp. Cameras, lighting,
 container positions, and teleoperation settings were the same in every session.
 
@@ -66,16 +67,16 @@ container positions, and teleoperation settings were the same in every session.
 \toprule
 Set & Content & Episodes & Frames & Mean (s)\\
 \midrule
-u1 & Carrot + one snack, normal & 49 & 70{,}550 & 48.0\\
-u2 & Carrot + one snack, recovery & 16 & 24{,}862 & 51.8\\
-u4n & Three items, normal & 51 & 89{,}899 & 58.8\\
-u4r & Three items, recovery & 24 & 43{,}272 & 60.1\\
+2N & Carrot + one snack, normal & 49 & 70{,}550 & 48.0\\
+2R & Carrot + one snack, recovery & 16 & 24{,}862 & 51.8\\
+3N & Three items, normal & 51 & 89{,}899 & 58.8\\
+3R & Three items, recovery & 24 & 43{,}272 & 60.1\\
 \midrule
-u4a & u1 + u2 + u4n & 116 & 185{,}311 & --\\
-u4 & u4a + u4r & 140 & 228{,}583 & --\\
+all & 2N + 2R + 3N + 3R & 140 & 228{,}583 & --\\
 \bottomrule
 \end{tabular}
-% Frames at 30 Hz; mean = frames / episodes / 30. Names as in docs/experiments.md (u3 = u1 + u2).
+% Frames at 30 Hz; mean = frames / episodes / 30. Names in docs/experiments.md: 2N = u1, 2R = u2,
+% 3N = u4n, 3R = u4r, all = u4 (u4a = u1 + u2 + u4n, an intermediate training set, not evaluated).
 \end{table}
 
 \subsection{Observation, Action, and Dataset Preparation}
@@ -116,7 +117,7 @@ a 512-dimensional model and a conditional variational autoencoder (KL weight
 10) predicts a chunk of 100 actions (3.3~s) from one observation. States,
 actions, and images are normalized by their dataset mean and standard
 deviation. Training uses a batch size of 8, a constant learning rate of
-$10^{-5}$, and 100{,}000 steps, about 3.5 passes over u4. On the host's
+$10^{-5}$, and 100{,}000 steps, about 3.5 passes over \emph{all}. On the host's
 laptop GPU this takes about 7~h. The checkpoint at the final step is
 evaluated; no checkpoint is selected by test results.
 
