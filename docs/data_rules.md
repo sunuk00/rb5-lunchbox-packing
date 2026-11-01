@@ -52,7 +52,9 @@ dataset: they are the cases of the t3-d order with one snack missing (t3-d).
 5. move above the **black box** -> 6. lower a little -> 7. open -> 8. lift ->
 9. approach above the **Oreo** -> 10. down -> 11. close -> 12. lift -> 13. above the **large hole** ->
 14. lower a little -> 15. open -> 16. lift -> 17. the same for the **RITZ** into the **small hole** ->
-18. **lift about 5 cm and stop** -> 19. `n`. (Until t3-c: steps 9-16 for the one snack, then stop.)
+18. **lift, then move back above the item area near the ready pose and stop** (that pose starts the next
+episode) -> 19. `n`. (Until t3-c: steps 9-16 for the one snack, then the same return.) Checked in all four
+sessions (u1, u2, u4n, u4r): the episodes end 7-8 s after the last release, about 10 cm from the ready pose.
 - Steady, no hesitation, no exploring. Same order every time.
 - **A natural re-grasp is kept** (t3-a; t2 discarded it): a missed or slipped grasp followed by a re-grasp,
   when the episode still ends right (every object in its box or hole) within 180 s, with nothing hit and
