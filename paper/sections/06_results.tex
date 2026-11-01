@@ -2,6 +2,9 @@
 % Sources: data/eval/eval_sheet.csv (operator-confirmed judgments), data/policy/run_real_20261031_*.csv/.json/.mp4,
 % docs/experiments.md (evaluation row), docs/decisions.md t3-g addendum 3.
 \section{Results and Discussion}
+% Demonstration closes (target at each gripper close, kept episodes of real_20261029_042055 / _063325 / _123638,
+% real_20261030_040425): 422 closes, nearest to the black box center 184 mm; L2 RITZ grasp point (100, -740):
+% 10 closes within 50 mm, 55 within 100 mm. Stuck trials: 6 (L2), 7, 11, 20 (L3); trial 2 (L2) stood still.
 \label{sec:results}
 
 \subsection{Packing Performance}
@@ -73,8 +76,9 @@ moved above the item, and closed again, as shown in the recovery
 demonstrations. In total, 24 of the 30 items with a miss were eventually
 grasped (carrot 11/12, Oreo 7/8, RITZ 6/10). In the 12 successful trials, the
 gripper closed 65 times for 36 items, 1.8 times per item. Over all trials,
-only 54 of 181 closes lifted an item, but 94 of the closes came from the four
-trials in which the policy stalled (Section~\ref{sec:failures}). No policy
+only 54 of 181 closes lifted an item, but 94 of the 181 closes came from four
+trials in which the policy kept closing at an empty spot
+(Section~\ref{sec:failures}). No policy
 trained without recovery demonstrations was tested under the same protocol, so
 these numbers describe the evaluated policy and do not measure what the
 recovery episodes contributed.
@@ -88,12 +92,16 @@ the black box, and in the third it was pushed there without being grasped.
 The policy then closed repeatedly at a fixed empty spot, every 5--6~s, until
 the time limit, and neither the Oreo nor the RITZ was grasped. An item lying
 next to a container never appears in the training data: episodes with a
-dropped item were discarded (Section~\ref{sec:protocol}), and the recovery
-episodes only show re-grasps near the item.
+dropped item were discarded (Section~\ref{sec:protocol}), the recovery
+episodes only show re-grasps near the item, and none of the 422 gripper
+closes in the four collection sessions lay within 18~cm of the black box
+center.
 \emph{A far item not approached} caused two failures in L2. After placing
 the carrot and the Oreo, the policy moved to an empty area about 25~cm from
-the RITZ, which lay at the front edge of the item region, and stalled. The same
-layout succeeded once, and in its fourth trial the RITZ ended on the rim of
+the RITZ, which lay at the front edge of the item region, and stayed there,
+standing still or closing at an empty spot, until the run ended. This position
+was covered by the demonstrations (ten closes within 5~cm), so the cause is not
+missing coverage of the position. The same layout succeeded once, and in its fourth trial the RITZ ended on the rim of
 the small hole. The remaining two failures occurred in L5. In one, the Oreo
 was taken before the carrot, held near the fingertips, and slipped out on the
 way. In the other, the gripper pushed the carrot and turned it to an
@@ -125,8 +133,7 @@ demonstrated item region, the items keep their demonstrated orientations, and
 the containers, lighting, and items are fixed. Within this scope,
 placement was reliable, and the limiting factors were grasping and continuing
 from states the demonstrations do not cover. Demonstrations that pick up items
-lying beside the containers, wider coverage near the robot and at the far edge
-of the item region, and a perceived rather than fixed tool orientation are the
-direct next steps. The task-space interface connects the dissimilar leader and
+lying beside the containers and a perceived rather than fixed tool orientation
+are the direct next steps. The task-space interface connects the dissimilar leader and
 follower; it does not establish transfer to another follower. The study makes
 no claim about real food, unseen objects, industrial readiness, or safety.
