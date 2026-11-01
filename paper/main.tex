@@ -1,4 +1,4 @@
-% Application-paper draft: Sections I--VII are prose; the abstract is a plan.
+% Application-paper draft: Sections I--VII are prose; the abstract is a plan. Limit: 7 pages with references.
 % IEEE CCWC 2027 is the provisional venue/year; see README.txt.
 % Uses the standard IEEE conference class without margin or font overrides.
 \documentclass[conference]{IEEEtran}
@@ -36,12 +36,6 @@ this is a writing target, not a conference-specific requirement.
 robotic manipulation, teleoperation, task-space imitation learning,
 lunchbox packing, system integration
 \end{IEEEkeywords}
-
-\noindent\textbf{Working draft.} Sections~I--VII contain manuscript prose;
-the abstract remains a writing plan. Lunchbox packing
-is the target application; the repository currently documents a block-to-box
-pilot. Application experiments are pending. The final manuscript targets
-seven pages including references. Remove this editorial note before submission.
 
 \section{Introduction}
 \label{sec:intro}
@@ -170,32 +164,6 @@ existing method.
 
 \input{sections/07_conclusion}
 
-\begin{center}
-\begin{minipage}{\columnwidth}
-\centering
-\textbf{Writing plan: final seven-page allocation}\\[4pt]
-\begin{tabular}{lr}
-\toprule
-Content & Pages\\
-\midrule
-Title, abstract, and keywords & 0.35\\
-I. Introduction & 0.65\\
-II. Related work & 0.45\\
-III. System design and implementation & 1.30\\
-IV. Demonstration collection and deployment & 1.10\\
-V. Experimental setup and protocol & 0.90\\
-VI. Results and discussion & 1.50\\
-VII. Conclusion & 0.15\\
-References & 0.60\\
-\midrule
-Total, including figures and tables & 7.00\\
-\bottomrule
-\end{tabular}
-\end{minipage}
-\end{center}
-
-% Keep the working page-budget table intact and start references in the next column.
-\newpage
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 \end{document}
