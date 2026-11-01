@@ -26,9 +26,8 @@ where the next episode starts. The operator moves steadily, without hesitation o
 discarded when an item drops or lands outside its target (including the wrong
 hole), when anything is hit, when the motion pauses for more than about 2~s,
 or when a camera reports an error. A natural re-grasp after a slip is kept
-if the episode still ends correctly. Episodes end with a keyboard key or at a time
-limit (180~s for three items), and every session is checked with the converter before the next one
-begins.
+if the episode still ends correctly. Episodes end with a keyboard key or at
+the 180-s limit.
 
 \emph{Recovery demonstrations.}
 A pilot policy that saw only successful grasps closed beside an item, lifted
@@ -42,8 +41,7 @@ lifts the empty gripper, pauses for 0.5--1~s so that the grip camera sees the
 empty fingers, opens, moves directly above the item, and continues as in a
 normal episode. In the three-item recovery set, each item is missed eight times,
 covering four directions on the table. The miss lies 2.5--15.6~cm from the
-following grasp (median 8.5~cm, center to center), and the empty lift is
-8--15~cm.
+following grasp.
 
 \emph{Collection stages.}
 Data were collected in stages, so that each policy's failures could motivate
@@ -93,20 +91,17 @@ $g^{\mathrm{cmd}}$ is the trigger command. Both gripper values range from zero
 (closed) to one (open). The label is thus the target that the robot was
 commanded to reach, not its measured motion; the orientation follows from
 the position by the rule of Section~\ref{sec:interface} and is not learned.
-The observation adds the three camera images. Because the joint angles are
-part of the observation, the policy is specific to the RB5.
+The observation adds the three camera images.
 
 A converter builds the dataset from the raw logs on a 30~Hz grid starting at
 each episode's start. Targets and joint states, recorded at 50~Hz, are
 interpolated to the grid times. For each camera, the frame captured nearest to
 each grid time is used; in the four collection sessions, this frame lay within
-17.6~ms of the grid time for 99\% of the samples. Episodes in which the clutch
-was engaged for less than 1~s or the target moved less than 30~mm are left out,
-as are episodes with camera gaps. The images are reduced from $640\times480$
+17.6~ms of the grid time for 99\% of the samples. Episodes with almost no clutch
+use or target motion, or with camera gaps, are left out. The images are reduced from $640\times480$
 to $320\times240$ with the same resampling function used at run time. The
 result is stored in the LeRobot dataset format~\cite{cadene2024lerobot}, with
-images as compressed video. Datasets from separate sessions are merged without
-conversion, and each dataset keeps a copy of the settings used to build it.
+images as compressed video.
 
 \subsection{ACT Training and Autonomous Execution}
 \label{sec:execution}
