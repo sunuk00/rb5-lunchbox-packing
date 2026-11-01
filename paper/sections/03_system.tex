@@ -25,11 +25,8 @@ Three RGB cameras record at $640\times480$ and 30~fps: a RealSense D435
 fixed obliquely in front of the workspace (\emph{front}), a Logitech C270
 fixed above the item area and looking straight down (\emph{top}), and a
 Logitech Brio~101 mounted on the gripper and aimed at the fingers
-(\emph{grip}). Exposure, gain, and white balance are fixed. Each exposure is a
-multiple of 1/120~s, so the 60~Hz room lighting does not flicker in the images.
-At start-up, each camera's mean brightness is compared with a reference value,
-and a deviation above 15\% requires operator confirmation.
-Depth is not used. A black box and a meal box with a large and a small hole
+(\emph{grip}). Exposure, gain, and white balance are fixed, and depth is not
+used. A black box and a meal box with a large and a small hole
 are fixed at marked positions on the robot's table, and the items are placed
 within the view of the top camera (Fig.~\ref{fig:setup}). Table~\ref{tab:hardware}
 summarizes the components and operating settings.
@@ -94,27 +91,20 @@ recording path and an autonomous-execution path that reuse the same camera,
 gripper, and command-shaping modules (Fig.~\ref{fig:architecture};
 Section~\ref{sec:limits}).
 
-In the recording path, a teleoperation process runs a 50~Hz cycle.
-In each cycle, it reads the leader joints and the latest RB5 state,
-computes the follower target, and sends it.
-The gripper runs in its own 50~Hz thread, so a gripper fault does not stop
-the arm. The cameras run in a separate process with a capture thread and a
-writer thread per camera, which store every frame as a JPEG image with its
-capture time. Image work therefore cannot delay the command cycle. Robot,
-gripper, and camera samples are stamped with the same monotonic clock and
-saved at their native rates. The 30~Hz dataset is built from them offline
+In the recording path, a teleoperation process reads the leader joints and
+the RB5 state, computes the follower target, and sends it in every 50~Hz
+cycle. The gripper runs in its own 50~Hz thread and the cameras in a separate
+process, so neither a gripper fault nor image work can delay the command
+cycle. All samples are stamped with one monotonic clock and saved at their
+native rates; the 30~Hz dataset is built from them offline
 (Section~\ref{sec:workflow}).
 
-In the execution path, a policy process opens the same cameras with the same
-fixed settings and runs ACT on the GPU, at most once per 30~Hz step. Each
-predicted action chunk is stamped with its observation time. A servo
-process keeps the 50~Hz cycle without waiting for the policy. It combines the
-chunks by time and passes the resulting target through the same command
-shaping as in teleoperation. The two processes are pinned to separate CPU
-cores. The stated rates are implementation targets, not hard real-time
-guarantees. A cycle whose command would be sent more than 30~ms after the
-previous one keeps the previous target, and three such cycles in a row stop
-the run.
+In the execution path, a policy process runs ACT on images from the same
+cameras with the same fixed settings, and a servo process keeps the 50~Hz
+cycle without waiting for the policy. The stated rates are implementation
+targets, not hard real-time guarantees. A cycle whose command would be sent
+more than 30~ms after the previous one keeps the previous target, and three
+such cycles in a row stop the run.
 
 \begin{figure*}[t]
 \centering
@@ -153,10 +143,9 @@ clutch freezes the target. The next press, and every press or release of the
 mode button, re-anchors both references, so the target never jumps and the
 operator can reposition the hand without moving the robot.
 
-Early teleoperation trials used a Cartesian mapping,
-$\mathbf{p}_d=\mathbf{p}_d(t_0)+s\,\Delta\mathbf{p}_L$. In these trials, the
-natural arcs of the operator's hand leaked into unintended follower axes, and
-sideways drift turned the base. With \eqref{eq:normal} and
+With the Cartesian mapping of early teleoperation trials, the natural arcs
+of the operator's hand leaked into unintended follower axes, and sideways
+drift turned the base. With \eqref{eq:normal} and
 \eqref{eq:rotate}, forward and backward leader motion moves the gripper along
 the arm's radial direction, vertical motion changes only its height, and the
 base turns only in the rotate mode. A dead band
@@ -170,12 +159,10 @@ last joint stays still. The orientation is thus a fixed function of the target
 position, and the position together with a gripper value fully specifies the
 command. Items must therefore be graspable without wrist rotation.
 
-The gripper opening is proportional to the trigger. At start-up the gripper
-follows only after the trigger reaches its current opening, which prevents
-a jump. In current-based position mode, the motor current is limited to
-0.50~A while moving. When the fingers stall short of the closed position,
-the goal is set $5^\circ$ past the stall point and the cap is raised to
-0.84~A, so the item is held firmly. The soft items, however, often let the
+The gripper opening is proportional to the trigger. The motor current is
+capped low while the fingers move. When they stall short of the closed
+position, the goal is set $5^\circ$ past the stall point and the cap is
+raised, so the item is held firmly (Table~\ref{tab:hardware}). The soft items, however, often let the
 fingers reach the closed position instead: in the four collection sessions,
 fewer than half of the grasps produced a stall, so a low motor current does
 not indicate an empty grasp.
@@ -193,41 +180,33 @@ the mapping.
 \begin{enumerate}
 \item \emph{Workspace}: the target is clipped to
 $r_{\min}(z)\le r\le r_{\max}(z)$, $19\le z\le465$~mm, and
-$-160^\circ\le\phi\le133^\circ$ (Table~\ref{tab:hardware}). The lower
-height bound keeps the fingers just above the table.
-\item \emph{Speed}: the component of each step along $\phi$ is limited to
-360~mm/s, and the component in $r$ and $z$ to 250~mm/s. The target may lag the
+$-160^\circ\le\phi\le133^\circ$ (Table~\ref{tab:hardware}).
+\item \emph{Speed}: the components of each step along $\phi$ and in $r$ and
+$z$ are limited separately (Table~\ref{tab:hardware}). The target may lag the
 hand by up to 20~mm and catches up after the hand stops.
 \item \emph{Singularities and joint limits}: the joint angles of the step are
 predicted by the RB5's analytic inverse kinematics. Wrist, shoulder, and
 elbow singularities and joint limits are monitored. Near one of them, the
 speed limit falls linearly to 25\%; closer still, the step is not sent.
-\item \emph{Joint speed}: per-joint limits of 75~deg/s for J1 and 60~deg/s
-for J2--J6.
+\item \emph{Joint speed}: per-joint limits (Table~\ref{tab:hardware}).
 \item \emph{Acceleration}: a 2.5~m/s$^2$ limit on the target, applied
-last. In trials, the largest accelerations occurred when an earlier limit
+last, because the largest accelerations occurred when an earlier limit
 switched on or off.
 \end{enumerate}
 The shaped position and the orientation rule form the TCP pose that is
 streamed to the controller with the RB5 API call \texttt{move\_servo\_l}.
 In one teleoperation trial, the arm followed the commands about 80~ms
-behind, and the joint error stayed within $0.23^\circ$. The speed limits
-were raised step by step from 100~mm/s, based on hand speeds measured in
-logged real-robot trials. They were then frozen together with all other
-teleoperation settings before demonstration collection.
+behind, and the joint error stayed within $0.23^\circ$. All teleoperation
+settings were frozen before demonstration collection.
 
 Before any motion, the software checks that the controller is in real mode
 and that its TCP offset is within 1~mm of the value in Table~\ref{tab:hardware}.
 Every demonstration and policy run therefore used the same TCP, to which all
 positions in this paper refer; the 19~mm height bound was set by placing the
-fingertips just above the table. The software then moves the robot to a
-fixed ready pose at low joint speed only after the operator types a
-confirmation. During operation, stale robot state, repeated leader read
-failures, or repeated late cycles stop the robot.
-The limiter is not collision avoidance and offers no formal safety
-guarantee. No collision-aware planner is used, and the controller's
-internal motion generation is outside the scope of this paper. During the
-evaluation, the controller's collision detection was enabled with its
-threshold at 30\%, and the tool mass was set to 0~kg, so the gripper's weight
+fingertips just above the table. During operation, stale robot state,
+repeated leader read failures, or repeated late cycles stop the robot. The
+limiter is not collision avoidance and offers no formal safety guarantee.
+During the evaluation, the controller's collision detection was enabled with
+its threshold at 30\%, and the tool mass was 0~kg, so the gripper's weight
 was not part of the controller's model.
 % Tablet settings confirmed by the user (2026-10-31): collision detection on, threshold 30 %, tool mass 0.000 kg.
