@@ -173,9 +173,15 @@ command. Items must therefore be graspable without wrist rotation.
 The gripper opening is proportional to the trigger. At start-up the gripper
 follows only after the trigger reaches its current opening, which prevents
 a jump. In current-based position mode, the motor current is limited to
-0.50~A while moving. When the fingers stall on an item, the goal is set
-60~ticks ($5^\circ$) past the stall point and the cap is raised to 0.84~A,
-so the item is held firmly.
+0.50~A while moving. When the fingers stall short of the closed position,
+the goal is set $5^\circ$ past the stall point and the cap is raised to
+0.84~A, so the item is held firmly. The soft items, however, often let the
+fingers reach the closed position instead: in the four collection sessions,
+fewer than half of the grasps produced a stall, so a low motor current does
+not indicate an empty grasp.
+% Stall count (grip_grasp flag in teleop.csv, closed periods): 151 stalls in sessions
+% real_20261029_042055 / _063325 / _123638, real_20261030_040425, against at least 359 item grasps
+% (kept episodes x items per episode, re-grasps not counted). Stall currents 198-685 mA, others <= 255 mA.
 
 \subsection{Operating Limits and Robot Interface}
 \label{sec:limits}
