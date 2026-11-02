@@ -3,8 +3,8 @@
 % docs/experiments.md (evaluation row), docs/decisions.md t3-g addendum 3.
 \section{Results and Discussion}
 % Demonstration closes (target at each gripper close, kept episodes of real_20261029_042055 / _063325 / _123638,
-% real_20261030_040425): 422 closes, nearest to the black box center 184 mm; L2 RITZ grasp point (100, -740):
-% 10 closes within 50 mm, 55 within 100 mm. Stuck trials: 6 (L2), 7, 11, 20 (L3); trial 2 (L2) stood still.
+% real_20261030_040425): 422 closes, nearest to the black box center 184 mm. Per item (labelled by the container
+% of the following release): L2 RITZ point 2 RITZ grasps within 50 mm, L3 Oreo point 0 Oreo grasps. Stuck trials: 6 (L2), 7, 11, 20 (L3); trial 2 (L2) stood still.
 \label{sec:results}
 
 \subsection{Packing Performance}
@@ -99,9 +99,8 @@ center.
 \emph{A far item not approached} caused two failures in L2. After placing
 the carrot and the Oreo, the policy moved to an empty area about 25~cm from
 the RITZ, which lay at the front edge of the item region, and stayed there,
-standing still or closing at an empty spot, until the run ended. This position
-was covered by the demonstrations (ten closes within 5~cm), so the cause is not
-missing coverage of the position. The same layout succeeded once, and in its fourth trial the RITZ ended on the rim of
+standing still or closing at an empty spot, until the run ended. The same
+layout succeeded once, and in its fourth trial the RITZ ended on the rim of
 the small hole. The remaining two failures occurred in L5. In one, the Oreo
 was taken before the carrot, held near the fingertips, and slipped out on the
 way. In the other, the gripper pushed the carrot and turned it to an
@@ -133,7 +132,8 @@ demonstrated item region, the items keep their demonstrated orientations, and
 the containers, lighting, and items are fixed. Within this scope,
 placement was reliable, and the limiting factors were grasping and continuing
 from states the demonstrations do not cover. Demonstrations that pick up items
-lying beside the containers and a perceived rather than fixed tool orientation
-are the direct next steps. The task-space interface connects the dissimilar leader and
+lying beside the containers, wider coverage near the robot and at the far edge
+of the item region, and a perceived rather than fixed tool orientation are the
+direct next steps. The task-space interface connects the dissimilar leader and
 follower; it does not establish transfer to another follower. The study makes
 no claim about real food, unseen objects, industrial readiness, or safety.
