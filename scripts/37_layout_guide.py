@@ -1,11 +1,11 @@
-"""t3-g: place the evaluation layouts with the top camera. Camera only, no robot.
+"""t3-g, t3-h: place the evaluation layouts with the top camera. Camera only, no robot.
 
 Opens the `top` camera with the recording's fixed settings (configs/real.yaml) and shows it live in a browser,
 http://localhost:PORT, with the targets of the chosen layout (configs/eval_layouts.yaml) drawn on it: a circle
 per item (C carrot orange, O Oreo blue, R RITZ red) around its grasp point. A layout that already has a saved
 photo (data/eval/layouts/L<n>.jpg) is blended in at half strength, to put the items back on it.
 
-Keys in this terminal (no Enter): 1-5 = layout, s = save the current image (without drawings) as the layout's
+Keys in this terminal (no Enter): 1-9 = layout (as many as configs/eval_layouts.yaml has), s = save the current image (without drawings) as the layout's
 photo, q = quit. Keep the robot at the ready pose (its gripper is in the top view at the start of a trial).
 The camera cannot be open here and in a policy run at the same time. During the evaluation the policy run shows
 the same view itself (python -m rb5_lerobot.run ... --trial N).
@@ -29,7 +29,7 @@ from teleop.settings import SettingsError, load_settings  # noqa: E402
 
 
 def parse(data):
-    return [c for c in data.decode("latin-1") if c in "12345sSqQ"]
+    return [c for c in data.decode("latin-1") if c in "123456789sSqQ"]
 
 
 def main():
@@ -60,7 +60,7 @@ def main():
         title = state["name"] + ("  (saved photo blended)" if state["photo"] is not None else "  (no photo yet)")
         return draw(state["img"], layouts[state["name"]], M, title, state["photo"])
 
-    url, problem = serve(frame, args.port, "Layout guide: keys in the terminal 1-5 layout, s save photo, q quit")
+    url, problem = serve(frame, args.port, f"Layout guide: keys in the terminal 1-{len(names)} layout, s save photo, q quit")
     if problem:
         cam.close()
         raise SystemExit(problem)
@@ -70,7 +70,7 @@ def main():
         raise SystemExit("needs a terminal for the keys")
     show = lambda n: print(f"{n}: " + ", ".join(f"{a} {b}" for a, b in layouts[n].items())  # noqa: E731
                            + ("  (photo blended)" if state["photo"] is not None else ""))
-    print(f"top camera {device}; open {url}  (1-5 layout, s save photo, q quit)")
+    print(f"top camera {device}; open {url}  (1-{len(names)} layout, s save photo, q quit)")
     show(state["name"])
     try:
         while True:
@@ -79,7 +79,7 @@ def main():
                 continue
             state["img"] = got[0]
             for k in keys.keys():
-                if k in "12345" and int(k) <= len(names):
+                if k in "123456789" and int(k) <= len(names):
                     state["name"] = names[int(k) - 1]
                     state["photo"] = load_photo(state["name"])
                     show(state["name"])

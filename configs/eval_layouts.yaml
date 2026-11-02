@@ -1,13 +1,22 @@
-# t3-g (2026-10-31): the 5 evaluation layouts of docs/data_rules.md "Evaluation" (scripts/37_layout_guide.py).
+# t3-h (2026-11-03): the 6 evaluation layouts of docs/data_rules.md "Evaluation" (scripts/37_layout_guide.py).
 # Targets in the RB5 base frame [mm]: grasp points of the carrot (C), Oreo (O) and RITZ (R). They only help to
-# find the spots; the taped marks and the saved top photos (data/eval/layouts/) are the reference.
+# find the spots; the saved top photos are the reference (no tape marks).
+# Design: one layout per nearest -> farthest order (all 6); each point has >= 6 demonstrated grasps of that item
+# within 50 mm (count in [ ], grasps of the 4 collection sessions labelled by the container of the next release);
+# items >= 210 mm apart; radii differ by >= 60 mm; >= 60 mm from the gripper at the ready pose (67, -499);
+# the same item >= 100 mm apart between layouts.
 layouts:
-  L1: {C: [80, -450], O: [250, -690], R: [-200, -600]}     # C R O: RITZ nearer than Oreo
-  L2: {C: [200, -480], O: [-180, -580], R: [100, -740]}    # C O R: the plain case
-  L3: {C: [30, -700], O: [150, -460], R: [-220, -640]}     # O R C: Oreo nearest
-  L4: {C: [280, -620], O: [-200, -680], R: [60, -470]}     # R C O: RITZ nearest, Oreo far
-  L5: {C: [250, -560], O: [80, -720], R: [-60, -560]}      # R C O: RITZ nearest
-rounds: 4            # each round starts one layout later: L1-L5, L2-L5 L1, ...
+  L1: {C: [-180, -560], O: [0, -680], R: [240, -700]}      # C O R  [C 11, O 6, R 7]
+  L2: {C: [120, -580], O: [280, -720], R: [-160, -640]}    # C R O  [C 9, O 9, R 15]
+  L3: {C: [200, -640], O: [-140, -540], R: [-60, -740]}    # O C R  [C 14, O 8, R 8]
+  L4: {C: [180, -740], O: [160, -520], R: [-60, -640]}     # O R C  [C 16, O 6, R 7]
+  L5: {C: [-140, -660], O: [60, -760], R: [240, -560]}     # R C O  [C 10, O 6, R 8]
+  L6: {C: [-40, -720], O: [260, -600], R: [-160, -540]}    # R O C  [C 13, O 9, R 8]
+rounds: 5            # each round starts one layout later: L1-L6, L2-L6 L1, ... (30 trials)
+# t3-g (2026-10-31, 20 trials, data/eval_t3g): L1 C (80, -450) O (250, -690) R (-200, -600); L2 C (200, -480)
+# O (-180, -580) R (100, -740); L3 C (30, -700) O (150, -460) R (-220, -640); L4 C (280, -620) O (-200, -680)
+# R (60, -470); L5 C (250, -560) O (80, -720) R (-60, -560); 4 rounds. Same-item grasps within 50 mm: L3 Oreo 0,
+# L2 RITZ 2; R C O twice, O C R and R O C missing.
 # top camera pixel (u, v) = M @ [x, y, 1]: affine fit to 10 grasp positions of u4n (real_20261029_123638, eps 1, 2,
 # 3, 15: item centres in the first top frame vs the target at the close), rms 18 px (about 2 cm)
 top_pixel_from_xy:

@@ -19,14 +19,16 @@ from rb5_lerobot.policy import PolicyClient  # noqa: E402
 class TestLayouts(unittest.TestCase):
     def test_file_and_order(self):
         layouts, rounds, M = load_layouts()
-        self.assertEqual(list(layouts), ["L1", "L2", "L3", "L4", "L5"])
+        self.assertEqual(list(layouts), ["L1", "L2", "L3", "L4", "L5", "L6"])
         self.assertTrue(all(set(v) == {"C", "O", "R"} for v in layouts.values()))
         self.assertEqual(M.shape, (2, 3))
         order = trial_order(list(layouts), rounds)
-        self.assertEqual(len(order), 20)
-        self.assertEqual([n for _, n in order[:7]], ["L1", "L2", "L3", "L4", "L5", "L2", "L3"])
-        for name in layouts:                                   # every layout 4 times, once per round
-            self.assertEqual(sorted(r for r, n in order if n == name), [1, 2, 3, 4])
+        self.assertEqual(len(order), 30)
+        self.assertEqual([n for _, n in order[:8]], ["L1", "L2", "L3", "L4", "L5", "L6", "L2", "L3"])
+        for name in layouts:                                   # every layout 5 times, once per round
+            self.assertEqual(sorted(r for r, n in order if n == name), [1, 2, 3, 4, 5])
+        nearest_first = {"".join(sorted(v, key=lambda k: np.hypot(*v[k]))) for v in layouts.values()}
+        self.assertEqual(nearest_first, {"COR", "CRO", "OCR", "ORC", "RCO", "ROC"})   # one layout per order
         for v in layouts.values():                             # every target inside the 640 x 480 top image
             for x, y in v.values():
                 u, w = M @ [x, y, 1]
@@ -46,10 +48,10 @@ class TestLayouts(unittest.TestCase):
 class TestSheet(unittest.TestCase):
     def test_write_read_and_run_file(self):
         path = Path(tempfile.mkdtemp()) / "sheet.csv"
-        self.assertEqual(write_sheet(path), 20)
+        self.assertEqual(write_sheet(path), 30)
         with self.assertRaises(FileExistsError):
             write_sheet(path)
-        self.assertEqual(trial_row(6, path)["layout"], "L2")
+        self.assertEqual(trial_row(7, path)["layout"], "L2")
         rows = read_sheet(path)
         rows[6]["notes"] = "kept"
         import csv

@@ -3329,6 +3329,20 @@ grasped (`M`, RITZ not attempted). **Rejected:** requiring
 the order for complete success (post-hoc); not counting order at all (the policy was trained on ordered
 demonstrations and the task asks for the order).
 
+## 2026-11-03 — t3-h: the evaluation is redone with 6 layouts x 5 rounds (replaces t3-g in the paper)
+
+**Decision (user):** a new session of act_u4 100000 alone on 6 layouts x 5 rounds = 30 trials; still no u4a
+comparison. One layout per nearest -> farthest order (all 6), so each item is nearest twice and the RITZ is nearer
+than the Oreo in 3. Points from the demonstrations: each has >= 6 grasps of that item within 50 mm (grasps of the 4
+collection sessions labelled by the container of the next release), items >= 21 cm apart, radii >= 6 cm apart,
+>= 6 cm from the gripper at the ready pose, the same item >= 10 cm apart between layouts (configs/eval_layouts.yaml,
+docs/data_rules.md "Evaluation"). Protocol, scoring and the t3-g addenda unchanged. **Reason:** t3-g had R C O
+twice and no O C R or R O C; by item, the L3 Oreo point had no Oreo grasp within 50 mm and the L2 RITZ point 2,
+and both layouts failed 3 of 4; L3 and L4 radii differed by only 24 and 29 mm. 30 trials narrow the 95 % interval
+at 60 % from 39-78 % to 42-75 % in one session (about 1 h 45 min); 36 would give 44-74 % for 25 min more.
+**Rejected:** adding O C R and R O C to the 20 t3-g trials (two sessions with different conditions, R C O still
+twice); explaining the duplicate in the paper only; u4 vs u4a (user: no comparison condition).
+
 ## PENDING
 
 - **14: RB-Y1 self-collision check during teleop.** Example 35 blocks the arm command when the

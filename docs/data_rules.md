@@ -143,29 +143,35 @@ Two stages (t3-b, user, 2026-10-29):
   otherwise a typed yes is needed. Reference, measured value and settings go into episodes.json.
 - 640x480 @ 30 for all three (the dataset resizes them to 320x240, `configs/policy.yaml`).
 
-## Evaluation (t3-g, 2026-10-31: the paper's evaluation of act_u4)
+## Evaluation (t3-h, 2026-11-03: the paper's evaluation of act_u4; replaces t3-g)
 - **Policy:** act_u4_20261030_054110 checkpoint 100000 (trained on all 140 episodes, the last checkpoint; not
-  chosen by any test result). No u4a comparison in the paper (user, 2026-10-31); it may be added later.
-- **5 layouts x 4 rounds = 20 trials.** Targets (robot base frame, mm; C carrot, O Oreo, R RITZ):
+  chosen by any test result). No u4a comparison in the paper (user, 2026-10-31 and 2026-11-03).
+- **6 layouts x 5 rounds = 30 trials** (t3-h). Targets (robot base frame, mm; C carrot, O Oreo, R RITZ; [n] =
+  demonstrated grasps of that item within 50 mm):
 
-  | Layout | C (x, y) | O (x, y) | R (x, y) | nearest -> farthest | why |
-  |---|---|---|---|---|---|
-  | L1 | (80, -450) | (250, -690) | (-200, -600) | C R O | RITZ nearer than Oreo |
-  | L2 | (200, -480) | (-180, -580) | (100, -740) | C O R | the plain case |
-  | L3 | (30, -700) | (150, -460) | (-220, -640) | O R C | Oreo nearest |
-  | L4 | (280, -620) | (-200, -680) | (60, -470) | R C O | RITZ nearest, Oreo far |
-  | L5 | (250, -560) | (80, -720) | (-60, -560) | R C O | RITZ nearest |
+  | Layout | C (x, y) | O (x, y) | R (x, y) | nearest -> farthest |
+  |---|---|---|---|---|
+  | L1 | (-180, -560) [11] | (0, -680) [6] | (240, -700) [7] | C O R |
+  | L2 | (120, -580) [9] | (280, -720) [9] | (-160, -640) [15] | C R O |
+  | L3 | (200, -640) [14] | (-140, -540) [8] | (-60, -740) [8] | O C R |
+  | L4 | (180, -740) [16] | (160, -520) [6] | (-60, -640) [7] | O R C |
+  | L5 | (-140, -660) [10] | (60, -760) [6] | (240, -560) [8] | R C O |
+  | L6 | (-40, -720) [13] | (260, -600) [9] | (-160, -540) [8] | R O C |
 
-  Nearest item: carrot 2, Oreo 1, RITZ 2; RITZ nearer than Oreo in 3 (the order error of run 130515). All inside
-  the u4n grasp positions, r 457-747 mm, items at least 21 cm apart, none under the gripper at the ready pose
-  (it hides that corner of the `top` view). Orientation as in the demonstrations (grasped without wrist
-  rotation). The targets only help to find the spots: the **taped marks and the saved `top` photo of each layout
-  are the reference** (the robot-to-image map is good to about 2 cm).
+  One layout per order: each item nearest twice, the RITZ nearer than the Oreo in 3. Every point has >= 6
+  demonstrated grasps of that item within 50 mm (grasps of the 4 collection sessions, labelled by the container
+  of the following release: carrot 142, Oreo 110, RITZ 109); items >= 21 cm apart; radii differ by >= 6 cm so
+  the order is clear; >= 6 cm from the gripper at the ready pose; the same item >= 10 cm apart between layouts.
+  Orientation as in the demonstrations (grasped without wrist rotation). No tape marks: the targets only help
+  to find the spots, the saved `top` photo of each layout is the reference (the robot-to-image map is good to
+  about 2 cm).
   Placing: `python scripts/37_layout_guide.py` (top camera only, robot at the ready pose) shows the live top view
-  in a browser with the targets of a layout (keys 1-5) and saves its photo (s) to `data/eval/layouts/L<n>.jpg`;
+  in a browser with the targets of a layout (keys 1-6) and saves its photo (s) to `data/eval/layouts/L<n>.jpg`;
   a saved photo is blended in, to put the items back between trials. The circle is the grasp point (the
-  carrot: its thick middle). `--sheet` wrote `data/eval/eval_sheet.csv` (the 20 trials in order).
-- **Order:** round 1 L1-L5, round 2 L2-L5, L1, round 3 L3 ... (each round starts one layout later), so a layout is
+  carrot: its thick middle). `--sheet` writes `data/eval/eval_sheet.csv` (the 30 trials in order).
+  The t3-g session (5 layouts x 4 rounds, 2026-10-31) is kept in `data/eval_t3g/`; its layouts are in a comment
+  of configs/eval_layouts.yaml (L3 Oreo had no Oreo grasp within 50 mm, L2 RITZ 2; R C O twice).
+- **Order:** round 1 L1-L6, round 2 L2-L6, L1, round 3 L3 ... (each round starts one layout later), so a layout is
   not always early or late in a session.
 - **One trial = one program run:** `python -m rb5_lerobot.run data/train/act_u4_20261030_054110 --real --trial N`
   (N from `data/eval/eval_sheet.csv`; moves to the ready pose, gripper open; http://localhost:8080 shows the top
@@ -192,8 +198,8 @@ Two stages (t3-b, user, 2026-10-29):
   `intervention`, `completion_s` (g to the last release, successes only), `failure` (main cause).
   Complete success stays a final-state criterion (order not required, as fixed before the session); the trials
   that were also in order are reported beside it.
-- **Measures:** complete successes / 20 with a Wilson 95 % interval; per stage: successes / items that reached
-  the stage (conditional); per item end to end: correct items / 60 (shows the cascade); grasp detail: first-try
+- **Measures:** complete successes / 30 with a Wilson 95 % interval; per stage: successes / items that reached
+  the stage (conditional); per item end to end: correct items / 90 (shows the cascade); grasp detail: first-try
   grasps / attempted items, successful closes / all closes, recovery rate (items grasped after at least one miss /
   items with a miss); order and wrong-hole errors per trial; completion time of the successful trials; failure
   categories. Reference: teleoperation 58.8 s per three-item episode (u4n). Supporting: inference time, servo
