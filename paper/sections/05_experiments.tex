@@ -1,6 +1,6 @@
 % Section V: Experimental setup and evaluation protocol (target 0.90 pages with the layout figure).
-% Sources: docs/data_rules.md "Evaluation", docs/decisions.md t3-g (and addenda), configs/eval_layouts.yaml,
-% data/eval/eval_sheet.csv. Results: Section VI.
+% Sources: docs/data_rules.md "Evaluation", docs/decisions.md t3-g (addenda) and t3-h, configs/eval_layouts.yaml,
+% data/eval/eval_sheet.csv (t3-h, 2026-11-03). Results: Section VI.
 \section{Experimental Setup and Evaluation Protocol}
 \label{sec:experiments}
 
@@ -11,15 +11,16 @@ The evaluation tests one policy: ACT trained on \emph{all} at its final checkpoi
 condition is evaluated; the study measures whether the complete application
 performs the packing task and how it fails.
 
-The items are placed in five predefined source layouts
-(Fig.~\ref{fig:layouts}). Each layout fixes the grasp point of every item in
-the robot base frame, inside the region where items were grasped in the
-three-item demonstrations (457--747~mm from the base axis), with the items at
-least 21~cm apart and oriented as in the demonstrations. The layouts vary
-which item lies nearest the robot: the carrot in two, the Oreo in one, and the
-RITZ in two. In three layouts the RITZ lies nearer than the Oreo, so that
-picking the nearest item first would break the packing order. The containers
-stay where they were during data collection.
+The items are placed in six predefined source layouts
+(Fig.~\ref{fig:layouts}), one for each order of the three items from nearest
+to farthest from the base axis. Each item is therefore nearest in two layouts,
+and in three layouts the RITZ lies nearer than the Oreo, so that picking the
+nearest item first would break the packing order. Each layout fixes the grasp
+point of every item in the robot base frame, at a point with at least six
+demonstrated grasps of that item within 5~cm. The items are at least 21~cm
+apart, their distances from the base axis differ by at least 6~cm so that the
+order is unambiguous, and they are oriented as in the demonstrations. The
+containers stay where they were during data collection.
 
 Item positions are not marked on the table. Instead, a top-camera photograph
 of each layout was saved once its items were in place (Fig.~\ref{fig:layouts});
@@ -32,7 +33,7 @@ places the items to match it.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_layouts.pdf}
-\caption{The five source layouts, seen by the top camera in the photographs
+\caption{The six source layouts, seen by the top camera in the photographs
 used to place the items. Each label lists the items from nearest to farthest
 from the robot base axis (C carrot, O Oreo, R RITZ). The gripper at the ready
 pose is at the upper left and the black box at the upper right; the meal box
@@ -40,14 +41,14 @@ lies outside the view.}
 \label{fig:layouts}
 \end{figure*}
 % Made by paper/figures/make_fig_layouts.py from data/eval/layouts/L*.jpg. Grasp points (x, y) in the base
-% frame, mm (configs/eval_layouts.yaml): L1 C(80,-450) O(250,-690) R(-200,-600); L2 C(200,-480) O(-180,-580)
-% R(100,-740); L3 C(30,-700) O(150,-460) R(-220,-640); L4 C(280,-620) O(-200,-680) R(60,-470);
-% L5 C(250,-560) O(80,-720) R(-60,-560).
+% frame, mm (configs/eval_layouts.yaml, t3-h): L1 C(-180,-560) O(0,-680) R(240,-700); L2 C(120,-580) O(280,-720)
+% R(-160,-640); L3 C(200,-640) O(-140,-540) R(-60,-740); L4 C(180,-740) O(160,-520) R(-60,-640);
+% L5 C(-140,-660) O(60,-760) R(240,-560); L6 C(-40,-720) O(260,-600) R(-160,-540).
 
 \subsection{Trial Procedure}
 \label{sec:trials}
-Each layout is tested four times, giving 20 trials in one session. Each
-round of five trials starts one layout later than the previous round, so that
+Each layout is tested five times, giving 30 trials in one session. Each
+round of six trials starts one layout later than the previous round, so that
 no layout is always early or late in the session. Each trial is a separate run of the
 execution program. The robot moves to the ready pose with the gripper open,
 the operator places the items, and a single start key begins autonomous
@@ -75,13 +76,13 @@ some container), and \emph{correct} (that container is the assigned one). An
 item that never reached a stage, such as the items left after the policy
 got stuck on an earlier one, is counted as not attempted there rather than as
 failed. Each stage's rate is thus conditional on reaching the stage, which
-locates the weak stage, while the share of the 60 items placed correctly shows
+locates the weak stage, while the share of the 90 items placed correctly shows
 how early failures cascade. Borderline final states were decided by the
 operator, who watched every trial.
 
-The primary measures are the complete successes out of 20 with a Wilson 95\%
+The primary measures are the complete successes out of 30 with a Wilson 95\%
 confidence interval~\cite{wilson1927probable}, the stage rates, the correctly
-placed items out of 60, and the completion time of the successful trials, from
+placed items out of 90, and the completion time of the successful trials, from
 the start key to the last release. Failed trials are assigned a main cause and
 excluded from the time statistics, so that fast failures do not appear
 advantageous. Grasping is described by the share of items grasped at the first

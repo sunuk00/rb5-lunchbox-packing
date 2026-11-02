@@ -7,10 +7,10 @@ robot. A clutch-relative mapping in cylindrical coordinates and one
 command-shaping stage serve
 both teleoperation and autonomous execution, so the recorded action is the
 target the robot executes. Trained with ACT on 140 demonstrations, one policy
-completed 12 of 20 packing trials over five layouts and placed 49 of 60 items
+completed 22 of 30 packing trials over six layouts and placed 73 of 90 items
 correctly, with no item released into a wrong compartment and a median
-completion time of 54.1~s. The failures arose in grasping and in continuing
-from states absent from the demonstrations, mainly items displaced beside a
-container. Extending the data beyond the limits of
+completion time of 66.6~s. The failures arose in grasping, mainly retries
+that drifted outward to the workspace bound and items flicked or pushed away
+by the fingertips. Extending the data beyond the limits of
 Section~\ref{sec:limitations}, and residual reinforcement learning, remain
 future work.

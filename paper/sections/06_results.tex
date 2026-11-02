@@ -2,34 +2,34 @@
 % Sources: data/eval/eval_sheet.csv (operator-confirmed judgments), data/policy/run_real_20261031_*.csv/.json/.mp4,
 % docs/experiments.md (evaluation row), docs/decisions.md t3-g addendum 3.
 \section{Results and Discussion}
-% Demonstration closes (target at each gripper close, kept episodes of real_20261029_042055 / _063325 / _123638,
-% real_20261030_040425): 422 closes, nearest to the black box center 184 mm. Per item (labelled by the container
-% of the following release): L2 RITZ point 2 RITZ grasps within 50 mm, L3 Oreo point 0 Oreo grasps. Stuck trials: 6 (L2), 7, 11, 20 (L3); trial 2 (L2) stood still.
+% t3-h session (2026-11-03), 30 trials: data/eval/eval_sheet.csv (operator judgments), draft from the logs
+% data/eval/eval_draft.csv (scripts/38_eval_draft.py), runs data/policy/run_real_20261103_*; docs/experiments.md.
+% Misses = log closes - grasps. Radius of the retries (desired / commanded, mm): trial 11 733 .. 814 / 800,
+% 15 665 .. 808 / 800, 20 671 .. 805 / 800 (Oreo point 762), 22 580 .. 799; clipping at most 14 mm.
 \label{sec:results}
 
 \subsection{Packing Performance}
 \label{sec:performance}
-Of the 20 trials, 12 were complete successes (60\%; Wilson 95\% interval
-39--78\%), and 11 of these also kept the demonstrated order.
+Of the 30 trials, 22 were complete successes (73\%; Wilson 95\% interval
+56--86\%), and all 22 kept the demonstrated order.
 Table~\ref{tab:results} breaks the outcome down by item and by layout. Of the
-60 items, 49 were placed correctly. No item was released into a wrong
+90 items, 73 were placed correctly. No item was released into a wrong
 compartment: every item that reached the place stage ended in its assigned
-container, except one RITZ that came to rest on the rim of the small hole.
-The losses occur earlier. The Oreo was lost mainly during transport (16 of 19
-grasped Oreos reached a container) and the RITZ at the grasp (15 of 19
-attempted). The carrot was grasped in 19 of 20 trials and then always placed;
-the exception is the trial with an intervention.
+container. The losses occur earlier. The carrot (25 of 30) and the Oreo (25
+of 27 attempted) were lost at the grasp, and the RITZ during transport (23 of
+25 grasped RITZ packages reached a container). Every grasped carrot and Oreo
+was placed correctly.
 
-The layouts differ more than the items. L1 and L4 succeeded in all four
-trials with every item placed, whereas L2 and L3 succeeded once each. The
-successful trials took a median of 54.1~s from the start key to the last
-release (mean 56.9~s, range 40.4--82.6~s). The three-item demonstrations lasted
-58.8~s on average under a longer measure (start to end of recording), so the
-policy packs at roughly the pace of teleoperation rather than faster.
+L2 succeeded in all five trials and L5 in two. The successful trials took a
+median of 66.6~s from the start key to the last release (mean 66.0~s, range
+43.3--111.7~s). The three-item demonstrations lasted 58.8~s on average under
+a longer measure (start to end of recording), so the policy packs somewhat
+more slowly than teleoperation; in 16 of the 22 successes, the first close on
+the carrot missed and a re-grasp added time.
 Fig.~\ref{fig:sequence} shows the fastest trial.
 
 \begin{table}[t]
-\caption{Evaluation Results (20 Trials)}
+\caption{Evaluation Results (30 Trials)}
 \label{tab:results}
 \centering
 \footnotesize
@@ -37,103 +37,100 @@ Fig.~\ref{fig:sequence} shows the fastest trial.
 \begin{tabular}{@{}lccccc@{}}
 \toprule
 \multicolumn{6}{@{}l}{(a) Stage rates per item, conditional on reaching the stage}\\
-Item & Grasp & Transport & Place & Correct & Correct / 20\\
+Item & Grasp & Transport & Place & Correct & Correct / 30\\
 \midrule
-Carrot & 19/20 & 19/19 & 19/19 & 19/19 & 19\\
-Oreo & 19/20 & 16/19 & 16/16 & 16/16 & 16\\
-RITZ & 15/19 & 15/15 & 14/15 & 14/14 & 14\\
+Carrot & 25/30 & 25/25 & 25/25 & 25/25 & 25\\
+Oreo & 25/27 & 25/25 & 25/25 & 25/25 & 25\\
+RITZ & 25/25 & 23/25 & 23/23 & 23/23 & 23\\
 \midrule
 \multicolumn{6}{@{}l}{(b) Per layout}\\
 Layout & Complete & \multicolumn{2}{c}{Correct items} & \multicolumn{2}{l}{Main failure causes}\\
 \midrule
-L1 & 4/4 & \multicolumn{2}{c}{12/12} & \multicolumn{2}{l}{--}\\
-L2 & 1/4 & \multicolumn{2}{c}{9/12} & \multicolumn{2}{l}{RITZ not approached (2), rim (1)}\\
-L3 & 1/4 & \multicolumn{2}{c}{6/12} & \multicolumn{2}{l}{Oreo displaced (3)}\\
-L4 & 4/4 & \multicolumn{2}{c}{12/12} & \multicolumn{2}{l}{--}\\
-L5 & 2/4 & \multicolumn{2}{c}{10/12} & \multicolumn{2}{l}{intervention (1), slip (1)}\\
+L1 & 3/5 & \multicolumn{2}{c}{10/15} & \multicolumn{2}{l}{carrot not grasped (2)}\\
+L2 & 5/5 & \multicolumn{2}{c}{15/15} & \multicolumn{2}{l}{--}\\
+L3 & 4/5 & \multicolumn{2}{c}{12/15} & \multicolumn{2}{l}{no motion after one close (1)}\\
+L4 & 4/5 & \multicolumn{2}{c}{13/15} & \multicolumn{2}{l}{Oreo not grasped (1)}\\
+L5 & 2/5 & \multicolumn{2}{c}{11/15} & \multicolumn{2}{l}{carrot, Oreo, RITZ (1 each)}\\
+L6 & 4/5 & \multicolumn{2}{c}{12/15} & \multicolumn{2}{l}{carrot flicked away (1)}\\
 \midrule
-All & 12/20 & \multicolumn{2}{c}{49/60} & \multicolumn{2}{l}{}\\
+All & 22/30 & \multicolumn{2}{c}{73/90} & \multicolumn{2}{l}{}\\
 \bottomrule
 \end{tabular}
-% One RITZ was not attempted (trial 20). Intervention: trial 5 (carrot re-placed by hand).
+% Not attempted: Oreo in trials 11, 22, 24; RITZ in 4, 11, 20, 22, 24. No intervention. L5: 15 carrot flicked away,
+% 20 Oreo not grasped, 25 RITZ fell into the black box.
 \end{table}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig3_sequence.pdf}
-\caption{A complete autonomous packing sequence (trial 18, layout L1), seen by
-the front camera. Times are from the start key; the last release was at 40.4~s.}
+\caption{A complete autonomous packing sequence (trial 2, layout L2), seen by
+the front camera. Times are from the start key; the last release was at 43.3~s.}
 \label{fig:sequence}
 \end{figure}
-% Made by paper/figures/make_fig3.py from data/policy/run_real_20261031_070212 (releases 9.4, 23.2, 40.4 s
-% after the start key; resting items shown halfway between a release and the next close).
+% Made by paper/figures/make_fig3.py from data/policy/run_real_20261103_044929.
 
 \subsection{Grasping and Recovery}
 \label{sec:grasping}
-Of the 59 attempted items, 29 were grasped at the first close. Grasping
+Of the 82 attempted items, 49 were grasped at the first close. Grasping
 again after a miss was common: after an empty close, the policy reopened,
 moved above the item, and closed again, as shown in the recovery
-demonstrations. In total, 24 of the 30 items with a miss were eventually
-grasped (carrot 11/12, Oreo 7/8, RITZ 6/10). In the 12 successful trials, the
-gripper closed 65 times for 36 items, 1.8 times per item. Over all trials,
-only 54 of 181 closes lifted an item, but 94 of the 181 closes came from four
-trials in which the policy kept closing at an empty spot
-(Section~\ref{sec:failures}). No policy
+demonstrations. In total, 26 of the 33 items with a miss were eventually
+grasped (carrot 17/22, Oreo 8/10, RITZ 1/1). In the 22 successful trials, the
+gripper closed 102 times for 66 items, 1.5 times per item. Over all trials,
+only 75 of 219 closes lifted an item, but 99 of the 219 closes came from the
+six trials that reached the time limit (Section~\ref{sec:failures}). No policy
 trained without recovery demonstrations was tested under the same protocol, so
 these numbers describe the evaluated policy and do not measure what the
 recovery episodes contributed.
 
 \subsection{Failure Analysis and Operational Behavior}
 \label{sec:failures}
-Eight trials failed. \emph{Items displaced from demonstrated states} caused
-three, all in L3, where the Oreo lies nearest the robot. The fingers closed
-on its edge; in two trials the Oreo was lifted and fell on the way, beside
-the black box, and in the third it was pushed there without being grasped.
-The policy then closed repeatedly at a fixed empty spot, every 5--6~s, until
-the time limit, and neither the Oreo nor the RITZ was grasped. An item lying
-next to a container never appears in the training data: episodes with a
-dropped item were discarded (Section~\ref{sec:protocol}), the recovery
-episodes only show re-grasps near the item, and none of the 422 gripper
-closes in the four collection sessions lay within 18~cm of the black box
-center.
-\emph{A far item not approached} caused two failures in L2. After placing
-the carrot and the Oreo, the policy moved to an empty area about 25~cm from
-the RITZ, which lay at the front edge of the item region, and stayed there,
-standing still or closing at an empty spot, until the run ended. The same
-layout succeeded once, and in its fourth trial the RITZ ended on the rim of
-the small hole. The remaining two failures occurred in L5. In one, the Oreo
-was taken before the carrot, held near the fingertips, and slipped out on the
-way. In the other, the gripper pushed the carrot and turned it to an
-orientation that the fingers could not close across. The operator re-placed
-it, so the trial counts as failed. Because the tool orientation follows a
-fixed rule (Section~\ref{sec:interface}) rather than being learned, a rotated
-item cannot be grasped.
+Eight trials failed. In four of them (trials 11, 15, 20, and 22), each retry
+after a miss closed farther out, until the closes reached about 800~mm from
+the base axis, the outer workspace bound of Section~\ref{sec:limits}, and
+repeated there until the time limit. In trials 11 and 15 the fingertips
+flicked the carrot away while closing, and in trial 22 the gripper pushed it
+out of reach. In trial 20 the Oreo stayed in place, but the gripper closed
+beyond its center (762~mm) on its far edge. The recovery demonstrations only
+return from the miss to directly above the item; a sequence of retries that
+drifts outward does not appear in them. In trial 15 the policy then turned to
+the Oreo and the RITZ and placed both.
 
-The packing order was broken three times, all in L5: after missing or
-displacing the carrot, the policy carried the Oreo first. The RITZ was never
-carried before the Oreo. In L4, where the RITZ lies nearest, the first reach
-went to the RITZ in all four trials; after missing it, the policy turned to
-the carrot and completed all four trials in order. The order was therefore
-learned, but proximity could take over when the next item in the order was
-not grasped.
+Two items were lost after being grasped. In trial 12 the carrot was never
+grasped; the policy turned to the RITZ, grasped it after eight misses, and
+dropped it on the floor on the way, and then placed the Oreo. In trial 25 the
+RITZ, held near the fingertips, fell into the black box on the way. The
+gripper was still closed, so this counts as a transport failure, not as a
+release into a wrong compartment. Of the remaining two failures, trial 4
+placed the carrot and then did not grasp the Oreo before the time limit. In
+trial 24 the policy closed once at an empty spot and then held the arm at
+about the same place until the time limit, while inference continued
+normally.
 
-Execution was stable throughout. Over 54{,}167 predictions (28.2 per second),
-inference took 23.6~ms at the median and 49.1~ms at the 95th percentile. The
-servo interval had a median of 20.0~ms and a maximum of 40.3~ms, and 30 of
-95{,}913 cycles were late. No hold was triggered, no robot state was stale,
-and every run was closed with the operator's key, five of them after the time
+The packing order was broken twice, both times after the carrot could not be
+grasped: the RITZ was carried first in trial 12 and the Oreo in trial 15.
+Once the carrot was placed, the order was always kept, including the three
+layouts in which the RITZ lies nearer than the Oreo. The order was therefore
+learned, but the policy could move on to another item when the next one in
+the order was not grasped.
+
+Execution was stable throughout. Over 87{,}430 predictions (29.8 per second),
+inference took 23.2~ms at the median and 31.9~ms at the 95th percentile. The
+servo interval had a median of 20.0~ms and a maximum of 22.0~ms, and 4 of
+146{,}844 cycles were late. No hold was triggered, no robot state was stale,
+and every run was closed with the operator's key, six of them after the time
 limit; none ended with a controller stop.
 
 \subsection{Application Scope and Limitations}
 \label{sec:limitations}
-The evidence comes from one policy, one training run, and one session; 20
-trials leave a wide confidence interval. The layouts lie inside the
+The evidence comes from one policy, one training run, and one session; 30
+trials still leave a wide confidence interval. The layouts lie inside the
 demonstrated item region, the items keep their demonstrated orientations, and
 the containers, lighting, and items are fixed. Within this scope,
-placement was reliable, and the limiting factors were grasping and continuing
-from states the demonstrations do not cover. Demonstrations that pick up items
-lying beside the containers, wider coverage near the robot and at the far edge
-of the item region, and a perceived rather than fixed tool orientation are the
-direct next steps. The task-space interface connects the dissimilar leader and
-follower; it does not establish transfer to another follower. The study makes
-no claim about real food, unseen objects, industrial readiness, or safety.
+placement was reliable, and the limiting factors were grasping and retries
+that the demonstrations do not cover. Demonstrations that recover displaced
+items, a grasp approach that neither pushes nor flicks the items, and more
+data near the edge of the workspace are the direct next steps. The
+task-space interface connects the dissimilar leader and follower; it does not
+establish transfer to another follower. The study makes no claim about real
+food, unseen objects, industrial readiness, or safety.
