@@ -2,8 +2,9 @@
 
 Drawn on a 100 x 50 grid (one unit = 1/14 in at the two-column width). Hardware images in this folder:
 photo_leader.png (RB-Y1 leader arm; since 2026-11-03 an image made with ChatGPT gpt-image from our photo, C2PA
-digitalSourceType trainedAlgorithmicMedia; our photo is in git history) and photo_rb5.png (our photo of the
-RB5-850 with the gripper); a missing image is drawn as a gray placeholder.
+digitalSourceType trainedAlgorithmicMedia; our photo is in git history) and photo_rb5.png (RB5-850 with the
+gripper; also made with ChatGPT gpt-image, C2PA trainedAlgorithmicMedia, 2026-10-31); a missing image is drawn as
+a gray placeholder.
 
     conda run -n rb5 python paper/figures/make_fig_architecture.py
 
