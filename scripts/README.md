@@ -495,8 +495,18 @@ Camera only (the `top` camera with the recording's fixed settings; no robot, no 
 in a browser with the targets of an evaluation layout (configs/eval_layouts.yaml: a circle per item at its grasp
 point) and saves the layout's reference photo; a saved photo is blended in at half strength.
 ```bash
-python scripts/37_layout_guide.py [--port 8080]   # then http://localhost:8080; keys 1-5 layout, s save, q quit
-python scripts/37_layout_guide.py --sheet         # writes data/eval/eval_sheet.csv (20 trials; never overwrites)
+python scripts/37_layout_guide.py [--port 8080]   # then http://localhost:8080; keys 1-6 layout, s save, q quit
+python scripts/37_layout_guide.py --sheet         # writes data/eval/eval_sheet.csv (30 trials; never overwrites)
 ```
 Keep the robot at the ready pose. Not while a policy run has the cameras open. Photos:
 `data/eval/layouts/L<n>.jpg`.
+
+## 38_eval_draft.py
+t3-h: a draft scoring of the evaluation runs from their logs, to help judging the videos. Reads the sheet and
+`data/policy/<run>.csv / .json / _video.csv`; writes `data/eval/eval_draft.csv` (per trial: closes, lifts, releases
+over each container or elsewhere, item order, last release time, time limit, stop) and
+`data/eval/eval_draft_events.txt` (every close and release with its time from the start key and in the video), and
+prints the execution totals. Never writes the sheet: the operator judges every trial from the video.
+```bash
+python scripts/38_eval_draft.py
+```
