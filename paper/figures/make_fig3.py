@@ -5,7 +5,7 @@ RITZ lifted, and the end of the recording. A resting item is shown halfway betwe
 next close, when the arm has left the container (at the release it hides it). Times come from the run log
 on the run clock and are printed relative to the start key.
 
-    conda run -n rb5 python paper/figures/make_fig3.py [--run data/policy/run_real_20261031_070212]
+    conda run -n rb5 python paper/figures/make_fig3.py [--run data/policy/run_real_20261103_044929]
 
 Writes paper/figures/fig3_sequence.pdf and .png.
 """
@@ -76,7 +76,7 @@ def grab(cap, n):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--run", default="data/policy/run_real_20261031_070212")
+    ap.add_argument("--run", default="data/policy/run_real_20261103_044929")   # t3-h trial 2 (L2), the fastest success
     a = ap.parse_args()
     t_start, closes, lifts, opens = read_log(a.run + ".csv")
     if len(closes) != 3 or len(opens) != 3:

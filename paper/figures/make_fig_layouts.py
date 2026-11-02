@@ -1,11 +1,11 @@
-"""Figure of the five evaluation layouts: the saved top-camera photographs, one per layout, in a row.
+"""Figure of the six evaluation layouts (t3-h): the saved top-camera photographs, one per layout, in a row.
 
 Each panel is labelled with the layout name and the items in order of distance from the base axis, nearest
 first (C carrot, O Oreo, R RITZ), computed from configs/eval_layouts.yaml.
 
     conda run -n rb5 python paper/figures/make_fig_layouts.py
 
-Reads data/eval/layouts/L1.jpg .. L5.jpg; writes paper/figures/fig_layouts.pdf and .png.
+Reads data/eval/layouts/L1.jpg .. L6.jpg; writes paper/figures/fig_layouts.pdf and .png.
 """
 import math
 from pathlib import Path
@@ -24,7 +24,7 @@ OUT = Path(__file__).resolve().parent / "fig_layouts"
 
 def main():
     layouts = yaml.safe_load((ROOT / "configs/eval_layouts.yaml").read_text())["layouts"]
-    fig, axes = plt.subplots(1, len(layouts), figsize=(7.16, 1.2), dpi=300)
+    fig, axes = plt.subplots(1, len(layouts), figsize=(7.16, 1.02), dpi=300)
     for ax, (name, items) in zip(axes, layouts.items()):
         img = cv2.imread(str(PHOTOS / f"{name}.jpg"))
         ax.imshow(cv2.cvtColor(img[:img.shape[0] - CROP_BOTTOM], cv2.COLOR_BGR2RGB))
