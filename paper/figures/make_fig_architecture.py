@@ -1,8 +1,9 @@
 """Fig. 2: system architecture, recording (teleoperation) on top and learning / autonomous execution below.
 
-Drawn on a 100 x 50 grid (one unit = 1/14 in at the two-column width). The hardware photos are our own:
-photo_leader.png (RB-Y1 leader arm) and photo_rb5.png (RB5-850 with the gripper), both in this folder; a
-missing photo is drawn as a gray placeholder.
+Drawn on a 100 x 50 grid (one unit = 1/14 in at the two-column width). Hardware images in this folder:
+photo_leader.png (RB-Y1 leader arm; since 2026-11-03 an image made with ChatGPT gpt-image from our photo, C2PA
+digitalSourceType trainedAlgorithmicMedia; our photo is in git history) and photo_rb5.png (our photo of the
+RB5-850 with the gripper); a missing image is drawn as a gray placeholder.
 
     conda run -n rb5 python paper/figures/make_fig_architecture.py
 
@@ -60,7 +61,9 @@ def photo(ax, name, x0, y0, x1, y1):
     img = plt.imread(p)
     if img.shape[2] == 3:                                  # no transparency: trim the white margins
         rows, cols = (img < 0.94).any(axis=2).nonzero()
-        img = img[rows.min():rows.max() + 1, cols.min():cols.max() + 1]
+    else:                                                  # transparent background: trim the clear margins
+        rows, cols = (img[:, :, 3] > 0.05).nonzero()
+    img = img[rows.min():rows.max() + 1, cols.min():cols.max() + 1]
     ih, iw = img.shape[:2]
     w, h = x1 - x0, y1 - y0
     if iw / ih > w / h:
@@ -83,7 +86,7 @@ def main():
     ax.set_axis_off()
 
     # Recording: leader arm -> PC -> control box -> RB5
-    box(ax, 0.3, 27, 12, 22.5, fc="white")   # the leader photo has a white background
+    box(ax, 0.3, 27, 12, 22.5, fc="white")   # white behind the leader image
     label(ax, 6.3, 47.2, "Leader arm\n(RB-Y1)", size=TITLE)
     photo(ax, "photo_leader.png", 1.5, 32.0, 11.1, 45.3)
     label(ax, 6.3, 29.8, "Dynamixel,\nU2D2, 2 Mbps")
