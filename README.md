@@ -33,9 +33,17 @@ while the three cameras record.*
   LeRobot dataset, and an ACT policy predicts Cartesian position targets and gripper commands. At run time,
   chunks are combined by time in a separate 50 Hz servo process.
 
-**Hardware:** RB5-850 (control box 8.4.4), RB-Y1 leader arm (Dynamixel, U2D2), in-house 3D-printed parallel
-gripper (Dynamixel MX-106), cameras RealSense D435 (front), Logitech C270 (top), Logitech Brio 101 (grip),
-a Linux laptop with an NVIDIA RTX A1000.
+## Hardware
+
+| Part | Model | Role |
+|---|---|---|
+| Follower robot | Rainbow Robotics RB5-850 (control box 8.4.4) | Six-joint arm that packs the items |
+| Leader arm | Rainbow Robotics RB-Y1 leader (Dynamixel, U2D2) | Read-only input for teleoperation: right arm and clutch, left handle for the mode button and trigger |
+| Gripper | In-house 3D-printed parallel gripper, Dynamixel MX-106 | Grasps the items; follows the trigger or the policy |
+| Front camera | Intel RealSense D435 (RGB only) | Fixed, oblique view of the workspace |
+| Top camera | Logitech C270 | Fixed above the item area, looking down |
+| Grip camera | Logitech Brio 101 | On the gripper, sees the fingers |
+| Host PC | Linux laptop, Intel i7-13700H, NVIDIA RTX A1000 | Teleoperation, recording, training, policy runs |
 
 ## Usage
 
