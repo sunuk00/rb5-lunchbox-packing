@@ -1,5 +1,5 @@
-% Application-paper draft: Sections I--VII are prose; the abstract is a plan. Limit: 7 pages with references.
-% IEEE CCWC 2027 is the provisional venue/year; see README.txt.
+% Application paper (provisional venue IEEE CCWC 2027). Limit: 7 pages with references.
+% Abstract numbers repeat Section VI (t3-h evaluation, docs/experiments.md).
 % Uses the standard IEEE conference class without margin or font overrides.
 \documentclass[conference]{IEEEtran}
 \usepackage{cite}
@@ -17,19 +17,23 @@
 \maketitle
 
 \begin{abstract}
-\textit{Abstract plan.} Motivate meal-packing automation for hotel, event,
-and airport catering through repetitive assembly and scheduled service needs.
-Introduce the application: teaching a collaborative robot to place model food
-items into designated lunchbox compartments through human demonstrations.
-Explain the kinematic mismatch between a seven-joint
-leader arm and the six-joint RB5 follower. Describe the integrated platform: an RB5
-manipulator, a parallel gripper, and three RGB cameras. Summarize the workflow
-from teleoperation and episode recording to Action Chunking with Transformers
-training and autonomous execution. State the evaluated task and test
-conditions. After experiments, report the measured success count, trial count,
-and packing time, followed by the principal failure mode and the supported
-application scope. The final abstract should be approximately 150--200 words;
-this is a writing target, not a conference-specific requirement.
+Hotel, event, and airline catering repeatedly place specified food items into
+compartmented containers on fixed schedules. We present an imitation learning
+system that teaches this lunchbox-packing task to a six-joint RB5
+collaborative robot from demonstrations given with a seven-joint RB-Y1 leader
+arm. Because the two arms cannot be matched joint to joint, the leader's wrist
+motion is mapped, relative to a clutch press, to the follower's tool position
+in cylindrical coordinates about the base axis, and one command-shaping stage
+limits the commands in both teleoperation and autonomous execution. The
+platform adds a parallel gripper and three RGB cameras; demonstrations are
+converted into a LeRobot dataset, and an Action Chunking with Transformers
+(ACT) policy predicts Cartesian position targets and gripper commands.
+Trained on 140 demonstrations, the policy packs a model carrot and two snack
+packages into a black box and the two holes of a meal box in a fixed order.
+In 30 trials over six source layouts, it completed 22 packings and placed 73
+of 90 items correctly, with no item released into a wrong compartment and a
+median completion time of 66.6~s. The remaining failures arose in grasping,
+mainly retries that drifted away from the item.
 \end{abstract}
 
 \begin{IEEEkeywords}
