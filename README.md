@@ -11,9 +11,8 @@ https://github.com/user-attachments/assets/425b3098-4494-44a5-b52f-3b8b0602c27f
 *Autonomous runs at 2x speed: a successful trial; missed grasps of the carrot and the Oreo, each followed by a
 re-grasp and placement; and a failure in which the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
 
-<a href="https://www.youtube.com/watch?v=fSTNVyvqDPw"><img src="https://img.youtube.com/vi/fSTNVyvqDPw/hqdefault.jpg" width="480" alt="All 30 evaluation trials (YouTube)"></a>
-
-*All 30 evaluation trials in order, each from its start key, at 2x speed (YouTube).*
+**Full evaluation video:** [all 30 trials on YouTube](https://www.youtube.com/watch?v=fSTNVyvqDPw), in order, each
+from its start key, at 2x speed.
 
 
 https://github.com/user-attachments/assets/e72469f6-33c4-4588-9682-cf0d848952c3
