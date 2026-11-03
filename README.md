@@ -7,8 +7,7 @@ hole and a RITZ into the small hole of a meal box, in that order, from three RGB
 <!-- Video: drag data/eval/readme_clip.mp4 (39 s, 1.5 MB) into this line in the GitHub web editor; GitHub turns it
      into an inline player. Do not commit the mp4 itself. -->
 
-
-
+https://github.com/user-attachments/assets/d778df4a-8371-4b7f-bb88-9b9d124799c1
 
 
 *Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
