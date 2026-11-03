@@ -1,11 +1,3 @@
-
-
-https://github.com/user-attachments/assets/ff90321c-1b0e-47ea-a18f-422795e64a3d
-
-
-
-https://github.com/user-attachments/assets/8ffdd19a-edaa-4f7b-903e-8a60b6163ea1
-
 # Task-Space Imitation Learning for Robotic Lunchbox Packing
 
 A Rainbow Robotics RB5-850 learns to pack a lunchbox from demonstrations given with a kinematically different
