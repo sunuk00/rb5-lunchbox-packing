@@ -5,7 +5,7 @@ leader arm (RB-Y1, seven joints). The policy puts a model carrot into a black bo
 hole and a RITZ into the small hole of a meal box, in that order, from three RGB cameras.
 
 
-https://github.com/user-attachments/assets/d778df4a-8371-4b7f-bb88-9b9d124799c1
+https://github.com/user-attachments/assets/425b3098-4494-44a5-b52f-3b8b0602c27f
 
 
 *Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
