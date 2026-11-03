@@ -4,8 +4,6 @@ A Rainbow Robotics RB5-850 learns to pack a lunchbox from demonstrations given w
 leader arm (RB-Y1, seven joints). The policy puts a model carrot into a black box, then an Oreo into the large
 hole and a RITZ into the small hole of a meal box, in that order, from three RGB cameras.
 
-<!-- Video: drag data/eval/readme_clip.mp4 (39 s, 1.5 MB) into this line in the GitHub web editor; GitHub turns it
-     into an inline player. Do not commit the mp4 itself. -->
 
 https://github.com/user-attachments/assets/d778df4a-8371-4b7f-bb88-9b9d124799c1
 
@@ -15,7 +13,7 @@ the fingertips flick the carrot away. The evaluation (30 trials over six item la
 
 ## System
 
-![System architecture](paper/figures/fig_architecture.png)
+![System architecture](docs/images/architecture.png)
 
 - **Teleoperation.** The leader arm is only read. Forward kinematics gives its wrist position, which is mapped,
   relative to a clutch press, to the RB5 tool position in cylindrical coordinates about the robot base axis
@@ -57,7 +55,6 @@ Guides: `docs/pipeline_guide.md` (demonstrations to policy runs), `docs/teleop_g
 - `configs/` teleoperation (`real.yaml`, `sim.yaml`), learning and policy runs (`policy.yaml`), evaluation layouts
 - `scripts/` numbered test and analysis scripts (`scripts/README.md`); `tests/` unit tests with fake devices
 - `assets/` leader arm URDF (from rby1-sdk, Apache 2.0, see its LICENSE and NOTICE) and udev rules
-- `paper/` the paper source and the scripts that draw its figures
 
 The robot and leader arm images in the architecture figure were generated with ChatGPT (OpenAI, gpt-image)
 from photographs of our hardware.
