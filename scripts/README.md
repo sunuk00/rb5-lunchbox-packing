@@ -510,3 +510,10 @@ prints the execution totals. Never writes the sheet: the operator judges every t
 ```bash
 python scripts/38_eval_draft.py
 ```
+
+## 39_capture_views.py
+Paper Fig. 1: one frame of each recording camera (front, top, grip) with the recording's fixed settings
+(`configs/real.yaml`). Cameras only, no robot; nothing else may hold the cameras.
+```bash
+python scripts/39_capture_views.py [--warmup 30]   # -> data/cameras/views_<time>/front.png, top.png, grip.png
+```
