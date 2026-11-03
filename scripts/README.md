@@ -311,7 +311,7 @@ python scripts/23_trial_summary.py data/teleop/teleop_real_20261016_*.csv --tria
 | `--radius` | 30 | horizontal distance to P / Q that counts [mm] |
 
 Prints one line per trial (time, clutch presses, follow %, dropped mm, which limits were active) and a
-summary per setting without the practice trials. Protocol: `docs/real_trial_protocol.md`.
+summary per setting without the practice trials. Protocol: `docs/real_trial_protocol.md` (not used in the end; removed 2026-11-03, in git history).
 
 ### 24 run report
 ```
