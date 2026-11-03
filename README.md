@@ -8,8 +8,8 @@ hole and a RITZ into the small hole of a meal box, in that order, from three RGB
 https://github.com/user-attachments/assets/425b3098-4494-44a5-b52f-3b8b0602c27f
 
 
-*Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
-the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
+*Autonomous runs at 2x speed: a successful trial; missed grasps of the carrot and the Oreo, each followed by a
+re-grasp and placement; and a failure in which the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
 
 
 https://github.com/user-attachments/assets/e72469f6-33c4-4588-9682-cf0d848952c3
