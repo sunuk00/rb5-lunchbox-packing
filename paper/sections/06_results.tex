@@ -88,13 +88,13 @@ recovery episodes contributed.
 Eight trials failed. In four of them (trials 11, 15, 20, and 22), each retry
 after a miss closed farther out, until the closes reached about 800~mm from
 the base axis, the outer workspace bound of Section~\ref{sec:limits}, and
-repeated there until the time limit. In trials 11 and 15 the fingertips
+repeated there until the time limit in three of them; in trial 15 the policy
+instead turned to the Oreo and the RITZ and placed both. In trials 11 and 15 the fingertips
 flicked the carrot away while closing, and in trial 22 the gripper pushed it
 out of reach. In trial 20 the Oreo stayed in place, but the gripper closed
 beyond its center (762~mm) on its far edge. The recovery demonstrations only
 return from the miss to directly above the item; a sequence of retries that
-drifts outward does not appear in them. In trial 15 the policy then turned to
-the Oreo and the RITZ and placed both.
+drifts outward does not appear in them.
 
 Two items were lost after being grasped. In trial 12 the carrot was never
 grasped; the policy turned to the RITZ, grasped it after eight misses, and
@@ -116,7 +116,7 @@ the order was not grasped.
 
 Execution was stable throughout. Inference took 23.2~ms at the median
 (31.9~ms at the 95th percentile), only 4 of 146{,}844 servo cycles were late,
-and no hold or controller stop occurred.
+and apart from the six time-limit stops, no hold or controller stop occurred.
 % 87,430 predictions (29.8/s); servo interval median 20.0 ms, max 22.0 ms; no stale state; every run closed
 % with the operator's key, six after the time limit.
 
