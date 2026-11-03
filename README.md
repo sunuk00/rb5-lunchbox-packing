@@ -48,6 +48,16 @@ while the three cameras record.*
 | Grip camera | Logitech Brio 101 | On the gripper, sees the fingers |
 | Host PC | Linux laptop, Intel i7-13700H, NVIDIA RTX A1000 | Teleoperation, recording, training, policy runs |
 
+## Data and model
+
+| | Hugging Face | Content |
+|---|---|---|
+| Dataset | [sunuk000/rb5-lunchbox-packing](https://huggingface.co/datasets/sunuk000/rb5-lunchbox-packing) | 140 teleoperated demonstrations, LeRobot format, three cameras, 30 Hz (CC BY 4.0) |
+| Policy | [sunuk000/act-rb5-lunchbox-packing](https://huggingface.co/sunuk000/act-rb5-lunchbox-packing) | The ACT policy evaluated in the paper, final checkpoint at 100,000 steps (MIT) |
+
+The policy is specific to this robot and workspace: its state input is the RB5 joint angles, and the images come
+from the fixed camera positions shown above.
+
 ## Usage
 
 Two conda environments: `rb5` (teleoperation, recording; `environment.yml`) and `lerobot` (LeRobot 0.6.1;
