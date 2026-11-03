@@ -7,6 +7,10 @@ hole and a RITZ into the small hole of a meal box, in that order, from three RGB
 <!-- Video: drag data/eval/readme_clip.mp4 (39 s, 1.5 MB) into this line in the GitHub web editor; GitHub turns it
      into an inline player. Do not commit the mp4 itself. -->
 
+
+
+
+
 *Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
 the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
 
