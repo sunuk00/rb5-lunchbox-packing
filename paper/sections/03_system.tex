@@ -3,6 +3,16 @@
 % (real-1, grip-5, rec-1, rec-6, hw-1). Data format and ACT execution details: Section IV.
 \section{System Design and Implementation}
 \label{sec:system}
+% Fig. 2 placed here so that it floats to the top of an early page (two-column floats go to the next page).
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_architecture.pdf}
+\caption{Recording and autonomous-execution paths. Both send absolute
+Cartesian targets through the same command shaping; the recorded action is
+the shaped target.}
+\label{fig:architecture}
+\end{figure*}
+% Made by paper/figures/make_fig_architecture.py (leader and RB5 images: ChatGPT gpt-image, see Acknowledgment).
 
 \subsection{Hardware and Workspace}
 \label{sec:hardware}
@@ -41,17 +51,6 @@ fingers, so the gripper closes almost fully on every item, and the gripper
 position cannot tell a held item from an empty grasp.
 % Mean release positions in the base frame (session real_20261029_123638, 44 of 51 episodes with exactly
 % three releases; SD 22-44 mm): black box (394, -359), large hole (468, -196), small hole (370, -178) mm.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig1_setup.pdf}
-\caption{(a) Experimental setup. (b)--(d) The front, top, and grip camera views
-at one moment of a demonstration, just after the carrot was grasped. The front
-and top cameras are fixed; the grip camera moves with the gripper.}
-\label{fig:setup}
-\end{figure*}
-% Made by paper/figures/make_fig1.py: camera frames from data/demos/real_20261029_123638/episode_001 (640 x 480,
-% 1.5 s after the first close); setup photo paper/figures/photo_setup.jpg (placeholder until it exists).
 
 \begin{table}[t]
 \caption{Hardware, Software, and Operating Settings}
@@ -104,16 +103,6 @@ cycle without waiting for the policy. The stated rates are implementation
 targets, not hard real-time guarantees. A cycle whose command would be sent
 more than 30~ms after the previous one keeps the previous target, and three
 such cycles in a row stop the run.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_architecture.pdf}
-\caption{Recording and autonomous-execution paths. Both send absolute
-Cartesian targets through the same command shaping; the recorded action is
-the shaped target.}
-\label{fig:architecture}
-\end{figure*}
-% Made by paper/figures/make_fig_architecture.py (photos: photo_leader.png, photo_rb5.png, our own).
 
 \subsection{Dissimilar Leader--Follower Interface}
 \label{sec:interface}
