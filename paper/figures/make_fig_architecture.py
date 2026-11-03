@@ -20,6 +20,7 @@ from matplotlib.patches import FancyBboxPatch
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "fig_architecture"
 W, H = 100, 50
+YS = 0.9                             # vertical scale: one y unit is 0.9 x units on paper (figure 3.22 in high)
 TITLE, DETAIL = 7.0, 5.6            # font sizes [pt]
 BLUE_TXT = "#1f3d7a"                # detail text
 GRAY, ORANGE, YELLOW = "#f1f1f1", "#fbe3cc", "#fdf3d0"
@@ -66,24 +67,24 @@ def photo(ax, name, x0, y0, x1, y1):
         rows, cols = (img[:, :, 3] > 0.05).nonzero()
     img = img[rows.min():rows.max() + 1, cols.min():cols.max() + 1]
     ih, iw = img.shape[:2]
-    w, h = x1 - x0, y1 - y0
+    w, h = x1 - x0, (y1 - y0) * YS                         # h on paper, in x units
     if iw / ih > w / h:
         hh = w * ih / iw
-        y0, y1 = y0 + (h - hh) / 2, y0 + (h + hh) / 2
+        y0, y1 = y0 + (h - hh) / 2 / YS, y0 + (h + hh) / 2 / YS
     else:
         ww = h * iw / ih
         x0, x1 = x0 + (w - ww) / 2, x0 + (w + ww) / 2
-    ax.imshow(img, extent=[x0, x1, y0, y1], interpolation="antialiased", zorder=2)
+    ax.imshow(img, extent=[x0, x1, y0, y1], interpolation="antialiased", zorder=2, aspect="auto")   # extent already keeps the photo aspect (YS)
 
 
 def main():
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Liberation Serif"],
                          "mathtext.fontset": "stix"})
-    fig = plt.figure(figsize=(7.16, 7.16 * H / W))
+    fig = plt.figure(figsize=(7.16, 7.16 * H * YS / W))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, W)
     ax.set_ylim(0, H)
-    ax.set_aspect("equal")
+    ax.set_aspect(YS)
     ax.set_axis_off()
 
     # Recording: leader arm -> PC -> control box -> RB5
@@ -138,8 +139,8 @@ def main():
     box(ax, 51, 1.0, 24, 12.3)
     label(ax, 63, 12.1, "Policy runner", size=TITLE)
     box(ax, 52.0, 6.4, 22, 4.6, "Policy process", "ACT inference, time-stamped chunks", r=0.5, title_dy=1.3)
-    box(ax, 52.0, 1.6, 22, 4.6, "Servo process (50 Hz)", "temporal ensembling 30→50 Hz,\nsame command shaping",
-        r=0.5, title_dy=1.2)
+    box(ax, 52.0, 1.25, 22, 4.95, "Servo process (50 Hz)", "temporal ensembling 30→50 Hz,\nsame command shaping",
+        r=0.5, title_dy=1.15)
 
     # Execution links (blue dashed)
     arrow(ax, [(56, 16.5), (56, 13.3)], color=BLUE_LN, ls="--")
