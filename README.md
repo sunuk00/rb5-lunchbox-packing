@@ -58,3 +58,7 @@ Guides: `docs/pipeline_guide.md` (demonstrations to policy runs), `docs/teleop_g
 
 The robot and leader arm images in the architecture figure were generated with ChatGPT (OpenAI, gpt-image)
 from photographs of our hardware.
+
+## License
+
+MIT (see `LICENSE`), except `assets/leader_arm/`, which keeps its Apache 2.0 license and NOTICE.
