@@ -11,6 +11,12 @@ https://github.com/user-attachments/assets/d778df4a-8371-4b7f-bb88-9b9d124799c1
 *Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
 the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
 
+<!-- Time-lapse: drag data/media/collection_timelapse.mp4 (33 s, 3.3 MB) onto the empty line below in the GitHub
+     web editor, then delete this comment. -->
+
+*Demonstration collection (time-lapse): the operator behind the table teleoperates the RB5 with the leader arm
+while the three cameras record.*
+
 ## System
 
 ![System architecture](docs/images/architecture.png)
