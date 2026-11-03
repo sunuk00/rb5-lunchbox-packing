@@ -15,9 +15,7 @@ the follower moves only while it is held. The left hand holds the handle of
 the leader's left arm, whose joints are not used; its button selects the
 rotate mode (Section~\ref{sec:interface}) while held, and its analog trigger
 sets the gripper opening, closed when released and fully open when pulled.
-The leader is only read; its motors are never torqued. While the clutch is
-released, the follower target stays fixed, so the leader may move freely
-without affecting the robot. The end
+The leader is only read; its motors are never torqued. The end
 effector is an in-house 3D-printed parallel gripper driven by one Dynamixel
 MX-106 actuator on a separate serial bus.
 
@@ -178,9 +176,8 @@ give this position in teleoperation; a policy action gives it in autonomous
 execution. The first two stages use the same cylindrical coordinates as
 the mapping.
 \begin{enumerate}
-\item \emph{Workspace}: the target is clipped to
-$r_{\min}(z)\le r\le r_{\max}(z)$, $19\le z\le465$~mm, and
-$-160^\circ\le\phi\le133^\circ$ (Table~\ref{tab:hardware}).
+\item \emph{Workspace}: the target is clipped to the ranges of $r$, $z$, and
+$\phi$ in Table~\ref{tab:hardware}.
 \item \emph{Speed}: the components of each step along $\phi$ and in $r$ and
 $z$ are limited separately (Table~\ref{tab:hardware}). The target may lag the
 hand by up to 20~mm and catches up after the hand stops.

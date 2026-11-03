@@ -75,20 +75,15 @@ above a container without dropping), \emph{place} (released and resting inside
 some container), and \emph{correct} (that container is the assigned one). An
 item that never reached a stage, such as the items left after the policy
 got stuck on an earlier one, is counted as not attempted there rather than as
-failed. Each stage's rate is thus conditional on reaching the stage, which
-locates the weak stage, while the share of the 90 items placed correctly shows
-how early failures cascade. Borderline final states were decided by the
+failed, so each stage's rate is over the items that reached it. Borderline final states were decided by the
 operator, who watched every trial.
 
 The primary measures are the complete successes out of 30 with a Wilson 95\%
 confidence interval~\cite{wilson1927probable}, the stage rates, the correctly
 placed items out of 90, and the completion time of the successful trials, from
 the start key to the last release. Failed trials are assigned a main cause and
-excluded from the time statistics, so that fast failures do not appear
-advantageous. Grasping is described by the share of items grasped at the first
+excluded from the time statistics. Grasping is described by the share of items grasped at the first
 close, the share of closes that lifted an item, and the recovery rate, the
 share of items with a miss that were eventually grasped.
 An order error is recorded when an item is picked up and carried before an item
-that precedes it in the packing order; releases into a wrong compartment are
-counted separately.
-% TODO: add wilson1927probable (E. B. Wilson, J. Amer. Statist. Assoc., 1927) to references.bib.
+that precedes it in the packing order.

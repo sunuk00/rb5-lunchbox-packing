@@ -114,23 +114,19 @@ layouts in which the RITZ lies nearer than the Oreo. The order was therefore
 learned, but the policy could move on to another item when the next one in
 the order was not grasped.
 
-Execution was stable throughout. Over 87{,}430 predictions (29.8 per second),
-inference took 23.2~ms at the median and 31.9~ms at the 95th percentile. The
-servo interval had a median of 20.0~ms and a maximum of 22.0~ms, and 4 of
-146{,}844 cycles were late. No hold was triggered, no robot state was stale,
-and every run was closed with the operator's key, six of them after the time
-limit; none ended with a controller stop.
+Execution was stable throughout. Inference took 23.2~ms at the median
+(31.9~ms at the 95th percentile), only 4 of 146{,}844 servo cycles were late,
+and no hold or controller stop occurred.
+% 87,430 predictions (29.8/s); servo interval median 20.0 ms, max 22.0 ms; no stale state; every run closed
+% with the operator's key, six after the time limit.
 
 \subsection{Application Scope and Limitations}
 \label{sec:limitations}
 The evidence comes from one policy, one training run, and one session; 30
 trials still leave a wide confidence interval. The layouts lie inside the
 demonstrated item region, the items keep their demonstrated orientations, and
-the containers, lighting, and items are fixed. Within this scope,
-placement was reliable, and the limiting factors were grasping and retries
-that the demonstrations do not cover. Demonstrations that recover displaced
-items, a grasp approach that neither pushes nor flicks the items, and more
-data near the edge of the workspace are the direct next steps. The
-task-space interface connects the dissimilar leader and follower; it does not
-establish transfer to another follower. The study makes no claim about real
-food, unseen objects, industrial readiness, or safety.
+the containers, lighting, and items are fixed. Demonstrations that recover
+displaced items, a grasp approach that neither pushes nor flicks the items,
+and more data near the edge of the workspace are the next steps. The study
+makes no claim about real food, unseen objects, industrial readiness, or
+safety.
