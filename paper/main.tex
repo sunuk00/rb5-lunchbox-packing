@@ -39,24 +39,15 @@ lunchbox packing, system integration
 
 \section{Introduction}
 \label{sec:intro}
-Hotels, event venues, and airport catering services need to prepare meals
-consistently and in time for scheduled service. Boxed lunches offered by
-Las Vegas hotels illustrate this application in hospitality~\cite{venetian2026menu},
-while airline catering combines meal assembly with delivery coordinated to
-flight schedules~\cite{gategourmetcatering}. Preparing boxed meals and meal
-trays in these settings involves repeatedly arranging specified food items
-into containers. Automating this stage offers a way to reduce repetitive
-manual handling and support consistent meal assembly, motivating the
-development of robotic lunchbox-packing systems.
-
-A useful packing system must accommodate the item shapes, source positions,
-and container layouts associated with its intended menus. Each meal requires
-a complete sequence of picking, transferring, and placing multiple items;
-an isolated successful grasp does not ensure a correctly assembled lunchbox.
-An item can be dropped during transfer or released into the wrong compartment.
-These requirements motivate an automation approach in which operators can
-teach the packing motions through demonstrations and assess the resulting
-behavior at the level of the complete task.
+Hotels, event venues, and airport catering services must prepare many meals
+consistently and in time for scheduled service~\cite{venetian2026menu,gategourmetcatering},
+which involves repeatedly placing specified food items into the compartments
+of containers. A useful packing system must complete the whole sequence of
+picking, transferring, and placing several items, not a single grasp: an item
+dropped during transfer or released into the wrong compartment leaves the
+lunchbox incomplete. This motivates an approach in which operators teach the
+packing motions through demonstrations and the resulting behavior is assessed
+at the level of the complete task.
 
 Visual imitation learning provides a way to learn such motions from images
 and demonstrated actions. Action Chunking with Transformers
@@ -81,14 +72,10 @@ to be collected with the available leader hardware. The resulting policy
 still uses follower-specific state observations; the task-space interface
 serves demonstration collection and execution on the RB5.
 
-This paper presents an integrated imitation learning system designed for
-robotic lunchbox packing. The platform combines the leader arm, an RB5
-manipulator with a parallel gripper, and three RGB camera views. Recorded
-episodes are converted into a common training format, and an ACT policy
-predicts sequences of absolute Cartesian position targets and gripper commands
-from images and follower state. During execution, these predictions are
-converted to commands for the robot's Cartesian servo interface, with tool
-orientation supplied by a predefined rule. The contributions are:
+This paper presents an imitation learning system for robotic lunchbox
+packing. An ACT policy predicts absolute Cartesian position targets and
+gripper commands from images and follower state, and the gripper orientation
+follows a predefined rule. The contributions are:
 \begin{enumerate}
 \item An integrated platform connecting a kinematically dissimilar leader
 and follower, multi-view visual observations, and gripper control for a
@@ -114,13 +101,9 @@ storage, goal generation, and manipulation using tools. Their work places
 food serving within a complete household-assistance task. Santos et
 al.~\cite{santos2024packing} collected virtual-reality demonstrations of
 packing irregular grocery-like objects and learned a Markov model for
-predicting packing order. These studies address complementary aspects of
-packing: coordination of application components and selection of object
-sequence. Our target is the execution of demonstrated pick-and-place motions
-on a physical manipulator under a prescribed order and compartment assignment.
-A model carrot and two packaged snacks provide a bounded laboratory task in
-which grasp, transfer, release, and complete-packing outcomes can be assessed
-separately.
+predicting packing order. We focus instead on executing demonstrated
+pick-and-place motions on a physical manipulator under a prescribed order and
+compartment assignment.
 
 \subsection{Interfaces for Demonstration Collection}
 ALOHA~\cite{zhao2023act} uses approximately scaled leader and follower arms
@@ -128,16 +111,13 @@ with joint-space mapping to collect bimanual manipulation demonstrations.
 Universal Manipulation Interface (UMI)~\cite{chi2024umi} uses handheld grippers
 for demonstration collection and combines a relative-trajectory action
 representation with inference-time latency matching to support deployment
-across robot platforms. These systems illustrate how the collection interface
-and the policy's observation and action representations shape deployment.
-In our setup, the seven-joint leader and six-joint follower are connected
+across robot platforms. In our setup, the seven-joint leader and six-joint follower are connected
 through a task-space teleoperation interface that maps the leader's wrist
 motion to the follower's tool position in cylindrical coordinates about the
 base axis. Demonstrations are recorded
 while the RB5 executes the task, and the policy uses its joint and gripper
-state together with RGB observations. The role of this interface is to
-accommodate the available dissimilar hardware within one application system;
-policy transfer across follower robots remains outside the study's scope.
+state together with RGB observations. Policy transfer across follower robots
+is outside the scope of this study.
 
 \subsection{Visual Imitation Learning for Manipulation}
 ACT~\cite{zhao2023act} learns action chunks from visual observations and robot
@@ -147,12 +127,10 @@ Policy~\cite{chi2023diffusion} models action sequences through conditional
 denoising and executes them with receding-horizon control. Mandlekar et
 al.~\cite{mandlekar2022offline} show that learning from human demonstrations
 depends on demonstration quality, algorithmic choices, and the criteria used
-to select policies for evaluation. These findings motivate documenting the
-dataset and evaluation conditions alongside the adopted learning method.
-We use ACT as the policy component of the packing system. The paper's focus
-is the connection between data collection, action representation, robot
-execution, and task-level evaluation; the learning architecture follows the
-existing method.
+to select policies for evaluation; we therefore document the dataset and
+evaluation conditions. We use ACT unchanged; our focus is the connection
+between data collection, action representation, robot execution, and
+task-level evaluation.
 
 \input{sections/03_system}
 
