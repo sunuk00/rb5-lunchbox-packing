@@ -1,3 +1,11 @@
+
+
+https://github.com/user-attachments/assets/ff90321c-1b0e-47ea-a18f-422795e64a3d
+
+
+
+https://github.com/user-attachments/assets/8ffdd19a-edaa-4f7b-903e-8a60b6163ea1
+
 # Task-Space Imitation Learning for Robotic Lunchbox Packing
 
 A Rainbow Robotics RB5-850 learns to pack a lunchbox from demonstrations given with a kinematically different
@@ -11,8 +19,9 @@ https://github.com/user-attachments/assets/d778df4a-8371-4b7f-bb88-9b9d124799c1
 *Autonomous runs at 2x speed: a successful trial, a missed grasp followed by a re-grasp, and a failure in which
 the fingertips flick the carrot away. The evaluation (30 trials over six item layouts) is reported in the paper.*
 
-<!-- Time-lapse: drag data/media/collection_timelapse.mp4 (33 s, 3.3 MB) onto the empty line below in the GitHub
-     web editor, then delete this comment. -->
+
+https://github.com/user-attachments/assets/e72469f6-33c4-4588-9682-cf0d848952c3
+
 
 *Demonstration collection (time-lapse): the operator behind the table teleoperates the RB5 with the leader arm
 while the three cameras record.*
