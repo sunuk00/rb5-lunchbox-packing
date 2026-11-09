@@ -1,4 +1,4 @@
-# Task-Space Imitation Learning for Robotic Lunchbox Packing
+# A Task Space Imitation Learning System for Robotic Meal-Prepping
 
 A Rainbow Robotics RB5-850 learns to pack a lunchbox from demonstrations given with a kinematically different
 leader arm (RB-Y1, seven joints). The policy puts a model carrot into a black box, then an Oreo into the large
